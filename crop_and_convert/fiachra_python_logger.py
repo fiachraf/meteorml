@@ -1,0 +1,1 @@
+/home/fiachra/atom_projects/fiachra_python_logger/fiachra_python_logger.py

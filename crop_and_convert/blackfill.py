@@ -1,6 +1,14 @@
 import numpy as np
 import math
 import os
+import sys
+import traceback
+
+#sys path needs to be changed depending on machine or just have RMS added properly as a package
+sys.path.insert(1, "/home/fiachra/atom_projects/meteorml/RMS")
+
+from RMS.Formats import FFfile
+from RMS.Formats import FTPdetectinfo
 
 def add_zeros_row(image, top_or_bottom, num_rows_to_add):
     """ adds rows of zeros to either the top or bottom of the numpy array
@@ -8,15 +16,10 @@ def add_zeros_row(image, top_or_bottom, num_rows_to_add):
     """
     image_shape = np.shape(image)
     #shape returns (num_rows, num_cols)
-    # print(f"image_shape: {image_shape}")
     num_rows = image_shape[0]
     num_cols = image_shape[1]
 
-    # print(f"num_rows: {num_rows}")
-    # print(f"num_cols: {num_cols}")
     zero_rows = np.zeros((num_rows_to_add, num_cols))
-    # print(f"np.shape(zero_rows): {np.shape(zero_rows)}")
-    # print(f"zero_rows: {zero_rows}")
 
     if top_or_bottom == "top":
         new_image = np.vstack((zero_rows, image))
@@ -36,11 +39,7 @@ def add_zeros_col(image, left_or_right, num__cols_to_add):
     #shape returns (num_rows, num_cols)
     num_rows = image_shape[0]
     num_cols = image_shape[1]
-    # print(f"num_rows: {num_rows}")
-    # print(f"num_cols: {num_cols}")
     zero_cols = np.zeros((num_rows, num__cols_to_add))
-    # print(f"np.shape(zero_cols): {np.shape(zero_cols)}")
-    # print(f"zero_cols: {zero_cols}")
 
 
     if left_or_right == "left":
@@ -152,3 +151,120 @@ def search_dirs(search_term, chosen_dir=os.getcwd(), file_or_folder="", exact_ma
                         matching_entries.append(item)
 
     return matching_entries
+
+
+def crop_detections(detection_info, cwd):
+    """
+    crops the detection from the fits file using the information provided from the FTPdetectinfo files
+    detection_info is a single element of the list returned by the RMS.RMS.Formats.FTPdetectinfo.readFTPdetectinfo() function. This list contains only information on a single detection
+    cwd is the current working directory which should be the directorywhere the FTPdetectinfo file and the relevant fits arre contained
+
+    returns the cropped image as a Numpy array
+    """
+
+    fits_file_name = detection_info[0]
+    meteor_num = detection_info[2]
+    num_segments = detection_info[3]
+    first_frame_info = detection_info[11][0]
+    first_frame_no = first_frame_info[1]
+    last_frame_info = detection_info[11][-1]
+    last_frame_no = last_frame_info[1]
+
+    try:
+        #read the fits_file
+        fits_file = FFfile.read(cwd, fits_file_name, fmt="fits")
+        #image array with background set to 0 so detections stand out more
+        #TODO inlcude code to use mask for the camera, currently masks not available on the data given to me, Fiachra Feehilly (2021)
+        detect_only = fits_file.maxpixel - fits_file.avepixel
+        #set image to only include frames where detection occurs, reduces likelihood that there will then be multiple detections in the same cropped image
+        detect_only_frames = FFfile.selectFFFrames(detect_only, fits_file, first_frame_no, last_frame_no)
+
+        #get size of the image
+        row_size = detect_only_frames.shape[0]
+        col_size = detect_only_frames.shape[1]
+
+        #side 1, 2 are the left and right sides but still need to determine which is which
+        # left side will be the lesser value as the value represents column number
+        side_1 = first_frame_info[2]
+        side_2 = last_frame_info[2]
+        if side_1 > side_2:
+            right_side = math.ceil(side_1) + 1 #rounds up and adds 1 to deal with Python slicing so that it includes everything rather than cutting off the last column
+            left_side = math.floor(side_2)
+        else:
+            left_side = math.floor(side_1)
+            right_side = math.ceil(side_2) + 1
+        #side 3 and 4 are the top and bottom sides but still need to determine which is which
+        # bottom side will be the higher value as the value represents the row number
+        side_3 = first_frame_info[3]
+        side_4 = last_frame_info[3]
+        if side_3 > side_4:
+            bottom_side = math.ceil(side_3) + 1
+            top_side = math.floor(side_4)
+        else:
+            top_side = math.floor(side_3)
+            bottom_side = math.ceil(side_4) + 1
+
+        #add some space around the meteor detection so that its not touching the edges
+        #leftover terms need to be set to 0 outside if statements otherwise they wont be set if there's nothing left over which will cause an error with the blackfill.blackfill() line
+        left_side = left_side - 20
+        leftover_left = 0
+        if left_side < 0:
+            #this will be used later to determine how to fill in the rest of the image to make it square but also have the meteor centered in the image
+            leftover_left = 0 - left_side
+            left_side = 0
+
+        right_side = right_side + 20
+        leftover_right = 0
+        if right_side > col_size:
+            leftover_right = right_side - col_size
+            right_side = col_size
+
+        top_side = top_side - 20
+        leftover_top = 0
+        if top_side < 0:
+            leftover_top = 0 - top_side
+            top_side = 0
+
+        bottom_side = bottom_side + 20
+        leftover_bottom = 0
+        if bottom_side > row_size:
+            leftover_bottom = bottom_side - row_size
+            bottom_side = row_size
+
+
+        #get cropped image of the meteor detection
+        #first index set is for row selection, second index set is for column selection
+        crop_image = detect_only_frames[top_side:bottom_side, left_side:right_side]
+        square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
+
+        # #this bit is only needed to plot the image for visual demonstrations
+        # #-------------------------------------------------------------------
+        # #create plot of meteor_image and crop_image
+        # # has full image displayed on left side and then the can do two cropped images displayed on the right side
+        # fig, axd = plt.subplot_mosaic([['big_image', 'big_image', 'crop_image'],
+        #                                 ['big_image', 'big_image', 'small_image_2']],
+        #                                 )
+        #
+        # axd['big_image'].imshow(detect_only_frames)
+        # axd['crop_image'].imshow(crop_image)
+        # axd['small_image_2'].imshow(square_crop_image)
+        #
+        # # Create a Rectangle patch Rectangle((left column, top row), column width, row height, linewidth, edgecolor, facecolor)
+        # rect = patches.Rectangle((left_side, top_side), (right_side - left_side), (bottom_side - top_side), linewidth=1, edgecolor='r', facecolor='none')
+        #
+        # # Add the patch to the big image
+        # axd['big_image'].add_patch(rect)
+        #
+        # # change the size of the figure
+        # fig.set_size_inches(18.5, 10.5)
+        #
+        # # display the plot
+        # plt.show()
+        #
+        # #-------------------------------------------------------------------
+
+        return square_crop_image
+
+    except Exception as error:
+        print(f"error: {traceback.format_exc()}")
+        return None

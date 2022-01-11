@@ -188,11 +188,10 @@ for dir_name in top_directories:
     except Exception as error_1:
         logger.log(home_dir + "/log.csv", log_priority = "High", log_type = "Unknown error", logger_call_no = 7, details = f"Error: {error_1} - occured in dir: {cwd}")
         print(f"error_1: {traceback.format_exc()}")
-
 for item in fits_not_analysed:
-    if item[-4:] != "fits":
-        continue
-    logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "File not analysed", logger_call_no = 4, details = f"this file: {item[0]} in dir: {item[1]} was not analysed")
+    if item[0][-4:] == "fits":
+        logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "File not analysed", logger_call_no = 4, details = f"this file: {item[0]} in dir: {item[1]} was not analysed")
+
 for item in fits_dont_exist:
     logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "FITS File not found", logger_call_no = 5, details = f"failed to find FITS file: {item[0]} in dir: {item[1]}")
 

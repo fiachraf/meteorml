@@ -4,8 +4,10 @@ import os
 import sys
 import traceback
 
-#sys path needs to be changed depending on machine or just have RMS added properly as a package
-sys.path.insert(1, "/home/fiachra/atom_projects/meteorml/RMS")
+#could be changed if I installed RMS properly but I don't want to install everythin for RMS on my personal laptop 
+path_root = Path(__file__).parents[1]
+print(f"path_root: {path_root}/RMS")
+sys.path.insert(1, str(path_root) + "/RMS")
 
 from RMS.Formats import FFfile
 from RMS.Formats import FTPdetectinfo
@@ -93,7 +95,7 @@ def blackfill(image, leftover_top=0, leftover_bottom=0, leftover_left=0, leftove
     return
 
 
-def search_dirs(search_term, chosen_dir=os.getcwd(), file_or_folder="", exact_match=False, search_subdirs=False): #extension=""):
+def search_dirs(search_term, chosen_dir, file_or_folder="", exact_match=False, search_subdirs=False): #extension=""):
     """
     searches directory for the search term and returns a list of objects containing the search term
     chosen_dir is the directory to search
@@ -102,6 +104,7 @@ def search_dirs(search_term, chosen_dir=os.getcwd(), file_or_folder="", exact_ma
     search_subdirs designates if it should recursively search subdirectories
     extension designates if it should search for only files with the matching extension
 
+    Returns list of tuples, index 0 is the directory where the file is located and index 1 is the name of the file
     """
     matching_entries = []
 
@@ -111,18 +114,18 @@ def search_dirs(search_term, chosen_dir=os.getcwd(), file_or_folder="", exact_ma
                 for dir in dirs:
                     if exact_match == True:
                         if dir == search_term:
-                            matching_entries.append(os.path.join(root, dir))
+                            matching_entries.append((root, dir))
                     elif exact_match == False:
                         if dir.find(search_term) != -1:
-                            matching_entries.append(os.path.join(root, dir))
+                            matching_entries.append((root, dir))
             if file_or_folder == "" or file_or_folder == "file":
                 for file in files:
                     if exact_match == True:
                         if file == search_term:
-                            matching_entries.append(os.path.join(root, file))
+                            matching_entries.append((root, file))
                     elif exact_match == False:
                         if file.find(search_term) != -1:
-                            matching_entries.append(os.path.join(root, file))
+                            matching_entries.append((root, file))
 
 
     elif search_subdirs == False:
@@ -143,21 +146,21 @@ def search_dirs(search_term, chosen_dir=os.getcwd(), file_or_folder="", exact_ma
                 if item.find(search_term) != -1:
                     if file_or_folder == "folder":
                         if os.path.isdir(os.path.join(chosen_dir, item)) == True:
-                            matching_entries.append(item)
+                            matching_entries.append((os.getcwd(), item))
                     elif file_or_folder == "file":
                         if os.path.isfile(os.path.join(chosen_dir, item)) == True:
-                            matching_entries.append(item)
+                            matching_entries.append((os.getcwd(), item))
                     elif file_or_folder == "":
-                        matching_entries.append(item)
+                        matching_entries.append((os.getcwd(), item))
 
     return matching_entries
 
 
-def crop_detections(detection_info, cwd):
+def crop_detections(detection_info, fits_dir):
     """
     crops the detection from the fits file using the information provided from the FTPdetectinfo files
     detection_info is a single element of the list returned by the RMS.RMS.Formats.FTPdetectinfo.readFTPdetectinfo() function. This list contains only information on a single detection
-    cwd is the current working directory which should be the directorywhere the FTPdetectinfo file and the relevant fits arre contained
+    fits_dir is the the directory where the fits file is located
 
     returns the cropped image as a Numpy array
     """
@@ -172,7 +175,8 @@ def crop_detections(detection_info, cwd):
 
     try:
         #read the fits_file
-        fits_file = FFfile.read(cwd, fits_file_name, fmt="fits")
+        # print(f"fits_dir: {fits_dir}\nfits_file_name: {fits_file_name}")
+        fits_file = FFfile.read(fits_dir, fits_file_name, fmt="fits")
         #image array with background set to 0 so detections stand out more
         #TODO inlcude code to use mask for the camera, currently masks not available on the data given to me, Fiachra Feehilly (2021)
         detect_only = fits_file.maxpixel - fits_file.avepixel

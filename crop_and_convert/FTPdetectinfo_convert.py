@@ -4,7 +4,9 @@ import fiachra_python_logger as logger
 import traceback
 import time
 
-sys.path.insert(1, "/home/fiachra/atom_projects/meteorml/RMS")
+path_root = Path(__file__).parents[1]
+print(f"path_root: {path_root}/RMS")
+sys.path.insert(1, str(path_root) + "/RMS")
 from RMS.Formats import FFfile
 from RMS.Formats import FTPdetectinfo
 

@@ -10,9 +10,14 @@ import datetime
 from PIL import Image
 import traceback
 import blackfill
+from pathlib import Path
+
+path_root = Path(__file__).parents[1]
+print(f"path_root: {path_root}/RMS")
+sys.path.insert(1, str(path_root) + "/RMS")
 
 #sys path needs to be changed depending on machine or just have RMS added properly as a package
-sys.path.insert(1, "/home/fiachra/atom_projects/meteorml/RMS")
+# sys.path.insert(1, "/home/fiachra/atom_projects/meteorml/RMS")
 
 from RMS.Formats import FFfile
 from RMS.Formats import FTPdetectinfo
@@ -33,6 +38,10 @@ os.chdir(cwd)
 home_dir = os.getcwd()  #Meteor_Files directory
 print(home_dir)
 
+#gets a list of all the files available and then later as each file is analysed it will be removed from the list. At the end of the script any .fits files left in the list
+fits_not_analysed = blackfill.search_dirs("", chosen_dir=home_dir, file_or_folder="file", search_subdirs=True)
+# print(f"fits_not_analysed: {fits_not_analysed}")
+
 top_directories = os.listdir()  #should be ConfirmedFiles and RejectedFiles folders amd Empty directories too
 print(f"top_directories: {top_directories}")
 
@@ -51,7 +60,7 @@ if "ConfirmedFiles_png" not in top_directories or "RejectedFiles_png" not in top
 
 
 fits_dont_exist = []
-fits_not_analysed = []
+# fits_not_analysed = []
 #go through the folders in the top_directories and then only go through the ConfirmedFiles and RejectedFiles folders
 for dir_name in top_directories:
     os.chdir(home_dir)
@@ -78,9 +87,9 @@ for dir_name in top_directories:
                         files_list = os.listdir()   #individual files in the detection folder, e.g. BE0001....fits, FTPdetectinfo....txt etc.
 
                         #list of fits files that are not anlaysed as they dont appear in the FTPdetectinfo file
-                        # all files are added to the files_not_analysed list so that they can be removed as they are analysed
-                        for element in files_list:
-                            fits_not_analysed.append((element, cwd)) #this is the fastest method to make an actual copy, other methods exist for different scenarios when the list objects aren't strings
+                        # all files are added to the fits_not_analysed list so that they can be removed as they are analysed
+                        # for element in files_list:
+                        #     fits_not_analysed.append((element, cwd)) #this is the fastest method to make an actual copy, other methods exist for different scenarios when the list objects aren't strings
                         #elements from list are removed later
 
 
@@ -133,18 +142,19 @@ for dir_name in top_directories:
 
                             #loop through each image entry in the FTPdetectinfo file and analyse each image
                             for detection_entry in FTP_file:
-
+                                # print("test1")
 
                                 fits_file_name = detection_entry[0]
                                 meteor_num = detection_entry[2]
 
                                 if len((find_fits_file :=  blackfill.search_dirs(fits_file_name, chosen_dir=cwd, file_or_folder="file", exact_match=True, search_subdirs=False))) == 1:
-
+                                    # print("test2")
                                     square_crop_image = blackfill.crop_detections(detection_entry, cwd)
                                     try:
-                                        fits_not_analysed.remove((fits_file_name, cwd))
+                                        fits_not_analysed.remove((cwd, fits_file_name))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image
                                     except:
+                                        print("fuck1")
                                         pass
                                     #save the Numpy array as a png using PIL
                                     im = Image.fromarray(square_crop_image)
@@ -152,12 +162,19 @@ for dir_name in top_directories:
                                     im.save(home_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
 
                                 elif len((find_fits_file := blackfill.search_dirs(fits_file_name, chosen_dir=home_dir, file_or_folder="file", exact_match=True, search_subdirs=True))) == 1:
-
-                                    square_crop_image = blackfill.crop_detections(detection_entry, os.path.dirname(find_fits_file[0]))
+                                    print("test3")
+                                    print(f"find_fits_file: {find_fits_file}")
+                                    square_crop_image = blackfill.crop_detections(detection_entry, find_fits_file[0][0])
+                                    print("test21")
                                     try:
-                                        fits_not_analysed.remove((fits_file_name, cwd))
+                                        print(f"find_fits_file[0], find_fits_file[1]: {find_fits_file[0][0], find_fits_file[0][1]}")
+                                        print("test11")
+                                        print(f"fits_not_analysed: {fits_not_analysed}")
+                                        print("test12")
+                                        fits_not_analysed.remove((find_fits_file[0][0], find_fits_file[0][1]))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image
                                     except:
+                                        print("fuck2")
                                         pass
                                     #save the Numpy array as a png using PIL
                                     im = Image.fromarray(square_crop_image)
@@ -189,8 +206,10 @@ for dir_name in top_directories:
         logger.log(home_dir + "/log.csv", log_priority = "High", log_type = "Unknown error", logger_call_no = 7, details = f"Error: {error_1} - occured in dir: {cwd}")
         print(f"error_1: {traceback.format_exc()}")
 for item in fits_not_analysed:
-    if item[0][-4:] == "fits":
-        logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "File not analysed", logger_call_no = 4, details = f"this file: {item[0]} in dir: {item[1]} was not analysed")
+    # print(f"test4 item: {item}")
+    if item[1][-4:] == "fits":
+
+        logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "File not analysed", logger_call_no = 4, details = f"this file: {item[1]} in dir: {item[0]} was not analysed")
 
 for item in fits_dont_exist:
     logger.log(home_dir + "/log.csv", log_priority = "Medium", log_type = "FITS File not found", logger_call_no = 5, details = f"failed to find FITS file: {item[0]} in dir: {item[1]}")

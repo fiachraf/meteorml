@@ -1,11 +1,13 @@
 import PIL
-from PIL import image
+from PIL import Image
 import os
 
 folder_input = input("folder containing images that you want to flip: ")
 num_flips = int(input("enter 1 to perform just flip from left to right\nenter 2 to perform just a flip upside down\nenter 3 to flip left to right and upside down: " ))
 
 file_list = os.listdir(folder_input)
+
+os.chdir(folder_input)
 
 for item in file_list:
     #read the image

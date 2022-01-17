@@ -3,7 +3,7 @@ import math
 import os
 import sys
 import traceback
-
+from pathlib import Path
 #could be changed if I installed RMS properly but I don't want to install everythin for RMS on my personal laptop 
 path_root = Path(__file__).parents[1]
 print(f"path_root: {path_root}/RMS")

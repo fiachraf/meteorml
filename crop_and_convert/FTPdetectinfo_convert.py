@@ -3,7 +3,7 @@ import sys
 import fiachra_python_logger as logger
 import traceback
 import time
-
+from pathlib import Path
 path_root = Path(__file__).parents[1]
 print(f"path_root: {path_root}/RMS")
 sys.path.insert(1, str(path_root) + "/RMS")

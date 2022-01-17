@@ -6,7 +6,7 @@ import traceback
 from pathlib import Path
 #could be changed if I installed RMS properly but I don't want to install everythin for RMS on my personal laptop 
 path_root = Path(__file__).parents[1]
-print(f"path_root: {path_root}/RMS")
+#print(f"path_root: {path_root}/RMS")
 sys.path.insert(1, str(path_root) + "/RMS")
 
 from RMS.Formats import FFfile

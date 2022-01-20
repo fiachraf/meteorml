@@ -1,6 +1,7 @@
 import PIL
 from PIL import image
 import os
+import csv
 
 #ensures that tensorflow is used as the backend
 import tensorflow as tf
@@ -42,4 +43,8 @@ for item in file_list:
     if prediction != folder_input[-1]:
         false_list.append(item)
 
-print(f"false_list: {false_list}")
+log_file_name = false_iden_log.csv
+with open(log_file_name, "a") as csv_logfile:
+    csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
+    for item in false_list:
+        csv_logfile_writer.writerow([item])

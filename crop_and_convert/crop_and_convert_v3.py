@@ -11,7 +11,9 @@ from PIL import Image
 import traceback
 import blackfill
 from pathlib import Path
-from time import sleep
+from time import sleep, perf_counter
+
+
 path_root = Path(__file__).parents[1]
 print(f"path_root: {path_root}/RMS")
 sys.path.insert(1, str(path_root) + "/RMS")
@@ -31,9 +33,12 @@ from RMS.Formats import FTPdetectinfo
 
 #log command: (custom logger, just wanted something simple that I could look back on afterwards, could easily be changed out or removed)
 #log(log_file_name="log.csv", log_priority, log_type, logger_call_no, details, log_time=datetime.datetime.now()):
-
+print("need to change script to choose image type you want produced, detect only frames, maxframe or maxframe time sliced?")
 cwd = input("directory path which has ConfirmedFiles and RejectedFiles folders: ")  #Meteor_Files directory path e.g. ~/Downloads/Meteor_Files
+time_start = perf_counter()
 os.chdir(cwd)
+
+output_dir = input("output directory name for the pngs e.g. 20210104_pngs : ")
 
 home_dir = os.getcwd()  #Meteor_Files directory
 print(home_dir)
@@ -47,13 +52,18 @@ print(f"top_directories: {top_directories}")
 #maybe add line for input to confirm that user has inputted the correct directory, otherwise get them to cancel the script
 
 #creating new directories for the png versions of ConfirmedFiles and RejectedFiles
-if "ConfirmedFiles_png" not in top_directories or "RejectedFiles_png" not in top_directories:
+if output_dir not in top_directories:
     try:
-        os.mkdir("ConfirmedFiles_png")
+        os.mkdir(output_dir)
+    except:
+        pass
+    # may cause erros that it doesn't check if ConfirmedFiles_png or RejectedFiles_png directories exist
+    try:
+        os.mkdir(output_dir + "/" + "ConfirmedFiles_png")
     except:
         pass
     try:
-        os.mkdir("RejectedFiles_png")
+        os.mkdir(output_dir + "/" + "RejectedFiles_png")
     except:
         pass
 
@@ -146,7 +156,7 @@ for dir_name in top_directories:
 
                                 if len((find_fits_file :=  blackfill.search_dirs(fits_file_name, chosen_dir=cwd, file_or_folder="file", exact_match=True, search_subdirs=False))) == 1:
                                     # print("test2")
-                                    square_crop_image = blackfill.crop_detections(detection_entry, cwd)
+                                    square_crop_image = blackfill.crop_detections_maxframe(detection_entry, cwd, time_slice = True)
                                     try:
                                         fits_not_analysed.remove((cwd, fits_file_name))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image
@@ -155,19 +165,19 @@ for dir_name in top_directories:
                                     #save the Numpy array as a png using PIL
                                     im = Image.fromarray(square_crop_image)
                                     im = im.convert("L")    #converts to grescale
-                                    im.save(home_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
+                                    im.save(home_dir + "/" + output_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
 
                                 elif len((find_fits_file := blackfill.search_dirs(fits_file_name, chosen_dir=home_dir, file_or_folder="file", exact_match=True, search_subdirs=True))) == 1:
-                                    square_crop_image = blackfill.crop_detections(detection_entry, find_fits_file[0][0])
+                                    square_crop_image = blackfill.crop_detections_maxframe(detection_entry, find_fits_file[0][0], time_slice = True)
                                     try:
                                         fits_not_analysed.remove((find_fits_file[0][0], find_fits_file[0][1]))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image
                                     except:
                                         pass
-                                    #save the Numpy array as a png using PIL
+                                    # save the Numpy array as a png using PIL
                                     im = Image.fromarray(square_crop_image)
                                     im = im.convert("L")    #converts to grescale
-                                    im.save(home_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
+                                    im.save(home_dir + "/" + output_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
 
                                 else:
                                     fits_dont_exist.append((fits_file_name, cwd))
@@ -203,3 +213,6 @@ for item in fits_dont_exist:
 
 print("Cropping Script Finished")
 logger.log(home_dir + "/log.csv", log_priority = "High", log_type = "Script finished", logger_call_no = 6, details = f"Script has finished")
+
+time_end = perf_counter()
+print(f"time: {time_end - time_start}")

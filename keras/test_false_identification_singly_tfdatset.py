@@ -33,6 +33,16 @@ start_time = time.perf_counter()
 # Confidence of less than 55% from prediction is considered false as it may be interesting to see which predictions the network is very unsure about
 pred_list = []
 
+def false_pred(actual_label, predicted_label):
+    if abs(actual_label - predicted_label) < 0.45:
+        return True
+    else:
+        return False
+def get_label(file_name):
+    label_1_or_0 = int(dirname(file_name)[-1])
+    return label_1_or_0
+
+
 def normalise(image, label):
     image = tf.cast(image/255., tf.float32)
     return image, label
@@ -53,14 +63,20 @@ for x, y in file_dataset:
 file_dataset = file_dataset.map(normalise)
 
 pred_distribution_list = []
-
-for x, y in file_dataset:
-    prediction = CNN_model.predict(x)
+prediction_list = []
+#index varaible used to keep track of file names as images are loaded in batches while the filenames is just one long list
+index = 0
+for images_batch, labels_batch in file_dataset:
+    prediction = CNN_model.predict(images_batch)
     #print(f"prediction: {prediction}")
     #print(f"type(prediction): {type(prediction)}")
     #print(f"prediction: {prediction}")
-    pred = round(prediction[0][0], 2)
-    pred_distribution_list.append(pred)
+    for index_2, image in enumerate(images_batch):
+        #need the [index_2][0] slice as the [index_2] slice is an EagerTensor and the [0] slice then gets the actual value out of the EagerTensor
+        pred = round(prediction[index_2][0], 2)
+        pred_distribution_list.append(pred)
+        prediction_list.append(labels_batch[index_2], pred, false_pred(labels_batch[index_2], pred), image_paths[index_2])
+        image_paths += 1
     #print(f"file: {item}, prediction: {prediction}")
 
 # prediction_list = CNN_model.predict(file_dataset)
@@ -98,14 +114,7 @@ for x, y in file_dataset:
 
 os.chdir(initial_dir)
 
-def false_pred(actual_label, predicted_label):
-    if abs(actual_label - predicted_label) < 0.45:
-        return True
-    else:
-        return False
-def get_label(file_name):
-    label_1_or_0 = int(dirname(file_name)[-1])
-    return label_1_or_0
+
 
 log_file_name = f"{model_name[:-3]}_false_iden_log_singly.csv"
 with open(log_file_name, "a") as csv_logfile:

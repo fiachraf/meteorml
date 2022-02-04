@@ -56,7 +56,7 @@ def normalise(image, label):
 #iterate over all the files, first in the rejected files folder (0) and then in the Confirmed Files folder (1)
 
 #list to contain all prediction values so that it cna be used to plot histogram
-prediction_dist_list = []
+pred_distribution_list = []
 
 for i in range(2):
     os.chdir(folder_input + "/" + str(i))
@@ -93,7 +93,7 @@ def get_label(file_name):
     return label_1_or_0
 
 log_file_name = f"{model_name[:-3]}_false_iden_log_singly.csv"
-with open(log_file_name, "a") as csv_logfile:
+with open(log_file_name, "w") as csv_logfile:
     csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
     csv_logfile_writer.writerow(["Label", "Prediction", "False Prediction", "File Name"])
     for index, pred in enumerate(pred_list):

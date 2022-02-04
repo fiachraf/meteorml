@@ -71,12 +71,18 @@ for images_batch, labels_batch in file_dataset:
     #print(f"prediction: {prediction}")
     #print(f"type(prediction): {type(prediction)}")
     #print(f"prediction: {prediction}")
+    print(f"batch {(index + 1)/ 32} of {len(image_paths) / 32}")
     for index_2, image in enumerate(images_batch):
+        #print(f"labels_batch: {labels_batch}")
+        #print(f"type(labels_batch): {type(labels_batch)}")
+        #print(f"labels_batch[0]: {labels_batch[0]}")
+        #print(f"type(labels_batch[0]): {type(labels_batch[0])}")
+        label_numpy = labels_batch[index_2].numpy()
         #need the [index_2][0] slice as the [index_2] slice is an EagerTensor and the [0] slice then gets the actual value out of the EagerTensor
         pred = round(prediction[index_2][0], 2)
         pred_distribution_list.append(pred)
-        prediction_list.append(labels_batch[index_2], pred, false_pred(labels_batch[index_2], pred), image_paths[index_2])
-        image_paths += 1
+        prediction_list.append((label_numpy, pred, false_pred(label_numpy, pred), image_paths[index_2]))
+        index += 1
     #print(f"file: {item}, prediction: {prediction}")
 
 # prediction_list = CNN_model.predict(file_dataset)
@@ -114,14 +120,15 @@ for images_batch, labels_batch in file_dataset:
 
 os.chdir(initial_dir)
 
+print(f"len(prediction_list): {len(prediction_list)}")
 
 
-log_file_name = f"{model_name[:-3]}_false_iden_log_singly.csv"
-with open(log_file_name, "a") as csv_logfile:
+log_file_name = f"{model_name[:-3]}_false_iden_log_singly_tf.csv"
+with open(log_file_name, "w") as csv_logfile:
     csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
     csv_logfile_writer.writerow(["Label", "Prediction", "False Prediction", "File Name"])
-    for index, pred in enumerate(prediction_dist_list):
-        csv_logfile_writer.writerow([get_label(image_paths[index]), pred, false_pred(get_label(image_paths[index]), pred_distribution_list[index]), image_paths[index]]])
+    for label_1, pred_1, false_pred_1, file_name_1 in prediction_list:
+        csv_logfile_writer.writerow([label_1, pred_1, false_pred_1, file_name_1])
 
 #pred_distribution_list = []
 #for j in pred_list:
@@ -132,7 +139,7 @@ fig = plt.hist(pred_distribution_list, bins=100)
 plt.title("Prediction_distribution")
 plt.xlabel("Prediction")
 plt.ylabel("No. of predictions")
-plt.savefig(f"{model_name}_pred_dist_singly.png")
+plt.savefig(f"{model_name}_pred_dist_singly_tf.png")
 
 end_time = time.perf_counter()
 print(f"time elapsed: {end_time - start_time}")

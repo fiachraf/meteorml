@@ -23,6 +23,8 @@ def center_me(image, label):
     return image, label
 
 def standardise_me(image, label):
+    print(f"tf.shape(image): {tf.shape(image)}")
+    print(f"tf.shape(label): {tf.shape(label)}")
     std_val = tf.math.reduce_std(image, axis=None)
     image = tf.cast(image/std_val, tf.float32)
     return image, label
@@ -90,6 +92,8 @@ val_data = val_data.map(normalise_me)
 val_data = val_data.map(center_me)
 val_data = val_data.map(standardise_me)
 
+for x,y in train_data:
+    add lines here, and change script so that you can plot all the different stages of the image and print the file name too so that you can check that my functions are working per image instead of per dataset or per batch
 
 
 #sample netowrk, first layer has to include an argument for input shape
@@ -112,9 +116,7 @@ val_data = val_data.map(standardise_me)
 #similar recreation of model used by Peter S. Gural as shown in Table 3 in his paper:
 # Deep learning algorithms applied to the classification of video meteor detections, Peter S. Gural, doi:10.1093/mnras/stz2456
 model = models.Sequential()
-model.add(layers.Rescaling(1./255), input_shape=(128,128,1))
-model.add(layers.LayerNormalization(axis=1))
-model.add(layers.Conv2D(64, (3, 3), activation="relu"))
+model.add(layers.Conv2D(64, (3, 3), activation="relu", input_shape=(128,128,1)))
 model.add(layers.MaxPooling2D((2,2)))
 model.add(layers.Conv2D(64, (3,3), activation="relu"))
 model.add(layers.MaxPooling2D((2,2)))

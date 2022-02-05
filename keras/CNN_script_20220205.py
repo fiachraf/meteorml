@@ -91,10 +91,6 @@ val_norm = val_data.map(normalise_me)
 val_cent = val_data.map(center_me)
 val_stan = val_data.map(standardise_me)
 
-for x,y in train_data:
-    add lines here, and change script so that you can plot all the different stages of the image and print the file name too so that you can check that my functions are working per image instead of per dataset or per batch
-
-
 #sample netowrk, first layer has to include an argument for input shape
 # model = models.Sequential()
 # model.add(layers.Conv2D(32, (3, 3), activation="relu", input_shape=(150, 150, 3)))

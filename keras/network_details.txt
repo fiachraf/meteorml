@@ -1,0 +1,20 @@
+meteorml_20220104.h5
+trained on 20220104_pngs
+
+meteorml_20220115.h5
+trained on 20220115_pngs
+
+meteorml_20220121.h5
+trained on 20220121_pngs
+
+meteorml_20220122_1.h5
+meteorml_20220122_2.h5
+both trained on 20220121_pngs
+one had 5x5 size convolutions
+other one had only one convolution and one MaxPooling2D layer
+
+20220204_1.h5
+trained on 20220204_1_pngs
+
+20220204_2.h5
+trained on 20220204_2_pngs

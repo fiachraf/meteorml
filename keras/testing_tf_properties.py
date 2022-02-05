@@ -14,7 +14,23 @@ from tensorflow.keras import layers, models, Input
 import matplotlib.pyplot as plt
 import numpy as np
 
-# )
+#neeed to have label as second input argument and label as the second value to be returned for these 3 functions
+def normalise_me(image):
+    image = tf.cast(image/255., tf.float32)
+    return image
+
+def center_me(image):
+    mean_val = tf.math.reduce_mean(image, axis=None)
+    image = tf.cast(image - mean_val, tf.float32)
+    return image
+
+def standardise_me(image):
+    std_val = tf.math.reduce_std(image, axis=None)
+    image = tf.cast(image/std_val, tf.float32)
+    return image
+
+
+
 data_dir = input("directory that contains solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
 
 
@@ -32,7 +48,11 @@ train_data = keras.preprocessing.image_dataset_from_directory(
 image_paths = train_data.file_paths
 print(f"type(image_paths): {type(image_paths)}")
 print(f"type(train_data): {type(train_data)}")
+
 # print(f"train_data.shape(): {train_data.shape()}")
+
+# rescale_layer = layers.Rescaling(1./255)
+# normalise_layer = layers.LayerNormalization(axis=None)
 
 #images_batch and labels_batch are tensorflow.python.framework.ops.EagerTensor, they have a len of batch_size as defined in the keras.preprocessing.image_dataset_from_directory() function. Every time you get to the end of one batch, it gets replaced by the nex batch and so indexing can be a little tricky
 #image_paths is a python list that contains all the full file paths of the images found by the keras.preprocessing.image_dataset_from_directory() and does not have any batches and so to pair up the file names and the actual entries in the tensors, you need to keep track of different indices
@@ -54,8 +74,42 @@ for images_batch, labels_batch in train_data:
         # print(numpy_array)
         print(f"image_paths[{index}]: {image_paths[index]}")
         index += 1
-        plt.imshow(image)
+        # plt.imshow(image)
+        # plt.show()
+        output_1 = normalise_me(image)
+        # plt.imshow(output_1)
+        # plt.show()
+        output_2 = center_me(output_1)
+        # plt.imshow(output_2)
+        # plt.show()
+        output_3 = standardise_me(output_2)
+
+        # #this bit is only needed to plot the image for visual demonstrations
+        # #-------------------------------------------------------------------
+        # #create plot of meteor_image and crop_image
+        # # has full image displayed on left side and then the can do two cropped images displayed on the right side
+        fig, axd = plt.subplot_mosaic([['og_image', 'normalise_image', 'center_image', 'standardise_image']])
+
+        axd['og_image'].imshow(image)
+        axd['normalise_image'].imshow(output_1)
+        axd['center_image'].imshow(output_2)
+        axd['standardise_image'].imshow(output_3)
+        #
+        # # Create a Rectangle patch Rectangle((left column, top row), column width, row height, linewidth, edgecolor, facecolor)
+        # rect = patches.Rectangle((left_side, top_side), (right_side - left_side), (bottom_side - top_side), linewidth=1, edgecolor='r', facecolor='none')
+        #
+        # # Add the patch to the big image
+        # axd['big_image'].add_patch(rect)
+        #
+        # change the size of the figure
+        fig.set_size_inches(18.5, 10.5)
+        #
+        # display the plot
         plt.show()
+        #
+        # #-------------------------------------------------------------------
+
+
     # print(f"type(x): {type(x)}")
     # print(f"type(y): {type(y)}")
     # print(f"len(train_data): {len(train_data)}")

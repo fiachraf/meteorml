@@ -15,19 +15,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #neeed to have label as second input argument and label as the second value to be returned for these 3 functions
-def normalise_me(image, label):
+def normalise_me(image):
     image = tf.cast(image/255., tf.float32)
-    return image, label
+    return image
 
-def center_me(image, label):
-    mean_1 = tf.math.reduce_mean(image, axis=[1,2,3], keepdims=True)
-    image = image - mean_1
-    return image, label
+def center_me(image):
+    mean_val = tf.math.reduce_mean(image, axis=None)
+    print(f"mean_val: {mean_val}")
+    image = tf.cast(image - mean_val, tf.float32)
+    return image
 
-def standardise_me(image, label):
-    std_val = tf.math.reduce_std(image, axis=[1,2,3], keepdims=True)
-    image = image / std_val
-    return image, label
+def standardise_me(image):
+    std_val = tf.math.reduce_std(image, axis=None)
+    image = tf.cast(image/std_val, tf.float32)
+    return image
 
 
 
@@ -48,11 +49,12 @@ train_data = keras.preprocessing.image_dataset_from_directory(
 image_paths = train_data.file_paths
 print(f"type(image_paths): {type(image_paths)}")
 print(f"type(train_data): {type(train_data)}")
-# print(f"tf.shape(train_data): {tf.shape(train_data)}")
 
-normalise_data = train_data.map(normalise_me)
-center_data = normalise_data.map(center_me)
-standard_data = center_data.map(standardise_me)
+# layer = layers.LayerNormalization()
+# train_data = layer(train_data)
+# train_data = train_data.map(normalise_me)
+# train_data = train_data.map(center_me)
+# train_data = train_data.map(standardise_me)
 
 # print(f"train_data.shape(): {train_data.shape()}")
 
@@ -62,14 +64,14 @@ standard_data = center_data.map(standardise_me)
 #images_batch and labels_batch are tensorflow.python.framework.ops.EagerTensor, they have a len of batch_size as defined in the keras.preprocessing.image_dataset_from_directory() function. Every time you get to the end of one batch, it gets replaced by the nex batch and so indexing can be a little tricky
 #image_paths is a python list that contains all the full file paths of the images found by the keras.preprocessing.image_dataset_from_directory() and does not have any batches and so to pair up the file names and the actual entries in the tensors, you need to keep track of different indices
 index = 0
-for images_batch, labels_batch in center_data:
-    print(f"len(images_batch): {len(images_batch)}")
+for images_batch, labels_batch in train_data:
+    # print(f"len(images_batch): {len(images_batch)}")
     #could do line to take slice from image_paths which has same length as images_batch and then remove these from the original list so that things can be done in batches rather than singly
 
 
     for image in images_batch:
         #Each image is a tensorflow.python.framework.ops.EagerTensor
-        numpy_array = image.numpy()   #tensorflow function to convert EagerTensor to numpy array
+        # numpy_array = image.numpy()   #tensorflow function to convert EagerTensor to numpy array
         # print(f"type(numpy_array): {type(numpy_array)}")
         # print(f"type(labels_batch): {type(labels_batch)}")
         # for idk in image:
@@ -77,16 +79,16 @@ for images_batch, labels_batch in center_data:
         #     plt.imshow(idk)
         # print(f"type(image): {type(image)}")
         # print(numpy_array)
-        print(f"image_paths[{index}]: {image_paths[index]}")
+        # print(f"image_paths[{index}]: {image_paths[index]}")
         index += 1
-        plt.imshow(image)
-        plt.show()
-        # output_1 = normalise_me(image)
+        # plt.imshow(image)
+        # plt.show()
+        output_1 = normalise_me(image)
         # plt.imshow(output_1)
         # plt.show()
-        # output_2 = center_me(output_1)
-        # plt.imshow(output_2)
-        # plt.show()
+        output_2 = center_me(output_1)
+        plt.imshow(output_2)
+        plt.show()
         # output_3 = standardise_me(output_2)
 
         # #this bit is only needed to plot the image for visual demonstrations

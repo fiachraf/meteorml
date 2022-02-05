@@ -18,15 +18,14 @@ def normalise_me(image, label):
     return image, label
 
 def center_me(image, label):
-    mean_val = tf.math.reduce_mean(image, axis=None)
-    image = tf.cast(image - mean_val, tf.float32)
+    #image is really a batch of images and so axis=[1,2,3] and keepdims=True is needed so that it gets the mean and standard deviation for each individula image rather than across the batch
+    mean_1 = tf.math.reduce_mean(image, axis=[1,2,3], keepdims=True)
+    image = image - mean_1
     return image, label
 
 def standardise_me(image, label):
-    print(f"tf.shape(image): {tf.shape(image)}")
-    print(f"tf.shape(label): {tf.shape(label)}")
-    std_val = tf.math.reduce_std(image, axis=None)
-    image = tf.cast(image/std_val, tf.float32)
+    std_val = tf.math.reduce_std(image, axis=[1,2,3], keepdims=True)
+    image = image / std_val
     return image, label
 
 #keras preprocessing, will resize images etc.
@@ -68,10 +67,10 @@ train_data = keras.preprocessing.image_dataset_from_directory(
 )
 
 
-
-train_data = train_data.map(normalise_me)
-train_data = train_data.map(center_me)
-train_data = train_data.map(standardise_me)
+#need to create new datasets like this as it doesn't seem to work properly if the dataset is modified in place for some reason
+train_norm = train_data.map(normalise_me)
+train_cent = train_data.map(center_me)
+train_stan = train_data.map(standardise_me)
 
 
 val_data = keras.preprocessing.image_dataset_from_directory(
@@ -88,9 +87,9 @@ val_data = keras.preprocessing.image_dataset_from_directory(
     subset="validation",
     interpolation="bilinear",
 )
-val_data = val_data.map(normalise_me)
-val_data = val_data.map(center_me)
-val_data = val_data.map(standardise_me)
+val_norm = val_data.map(normalise_me)
+val_cent = val_data.map(center_me)
+val_stan = val_data.map(standardise_me)
 
 for x,y in train_data:
     add lines here, and change script so that you can plot all the different stages of the image and print the file name too so that you can check that my functions are working per image instead of per dataset or per batch
@@ -138,10 +137,10 @@ model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate
 
 #fit the model to the data
 history = model.fit(
-train_data,
+train_stan,
 steps_per_epoch=36,
 epochs=30,
-validation_data=val_data,
+validation_data=val_stan,
 validation_steps=36)
 
 model.save(output_model_name + ".h5")

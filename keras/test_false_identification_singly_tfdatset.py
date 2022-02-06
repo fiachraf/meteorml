@@ -43,9 +43,23 @@ def get_label(file_name):
     return label_1_or_0
 
 
-def normalise(image, label):
+
+#noramlisaton functions, can be done using keras preprocessinglayers which are present in newer versions of tensorflow, I am using tensorflow 2.4.1 I had a reson for this specific verions but I just can't remember
+def normalise_me(image, label):
     image = tf.cast(image/255., tf.float32)
     return image, label
+
+def center_me(image, label):
+#image is really a batch of images and so axis=[1,2,3] and keepdims=True is needed so that it gets the mean and standard deviation for each individula image rather than across the batch
+    mean_1 = tf.math.reduce_mean(image, axis=[1,2,3], keepdims=True)
+    image = image - mean_1
+    return image, label
+
+def standardise_me(image, label):
+    std_val = tf.math.reduce_std(image, axis=[1,2,3], keepdims=True)
+    image = image / std_val
+    return image, label
+
 
 # make a tf.dataset generator list
 data_dir = folder_input
@@ -58,9 +72,13 @@ file_dataset = image_dataset_from_directory(
    interpolation = "bilinear")
 image_paths = file_dataset.file_paths
 labels_list = []
-for x, y in file_dataset:
-   labels_list.append(y)
-file_dataset = file_dataset.map(normalise)
+#for x, y in file_dataset:
+#   labels_list.append(y)
+
+#have to apply the transofrmations like this, doesn't seem to work to modify the dataset in place
+file_dataset_norm = file_dataset.map(normalise_me)
+file_dataset_cent = file_dataset_norm.map(center_me)
+file_dataset_stan = file_dataset_cent.map(standardise_me)
 
 pred_distribution_list = []
 prediction_list = []
@@ -81,7 +99,7 @@ for images_batch, labels_batch in file_dataset:
         #need the [index_2][0] slice as the [index_2] slice is an EagerTensor and the [0] slice then gets the actual value out of the EagerTensor
         pred = round(prediction[index_2][0], 2)
         pred_distribution_list.append(pred)
-        prediction_list.append((label_numpy, pred, false_pred(label_numpy, pred), image_paths[index_2]))
+        prediction_list.append((label_numpy, pred, false_pred(label_numpy, pred), image_paths[index]))
         index += 1
     #print(f"file: {item}, prediction: {prediction}")
 
@@ -126,7 +144,7 @@ print(f"len(prediction_list): {len(prediction_list)}")
 log_file_name = f"{model_name[:-3]}_false_iden_log_singly_tf.csv"
 with open(log_file_name, "w") as csv_logfile:
     csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
-    csv_logfile_writer.writerow(["Label", "Prediction", "False Prediction", "File Name"])
+    csv_logfile_writer.writerow(["Label", "Prediction", "True Prediction", "File Name"])
     for label_1, pred_1, false_pred_1, file_name_1 in prediction_list:
         csv_logfile_writer.writerow([label_1, pred_1, false_pred_1, file_name_1])
 

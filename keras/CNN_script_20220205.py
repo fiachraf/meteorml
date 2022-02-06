@@ -132,12 +132,13 @@ model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate
 
 
 #fit the model to the data
+#steps_per_epoch is the number of training steps the code runs before beginning a new epoch, exclude this line to run over the whole dataset for each epoch
 history = model.fit(
 train_stan,
-steps_per_epoch=36,
+# steps_per_epoch=36,
 epochs=30,
-validation_data=val_stan,
-validation_steps=36)
+validation_data=val_stan)
+# validation_steps=36)
 
 model.save(output_model_name + ".h5")
 

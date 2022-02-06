@@ -13,13 +13,29 @@ from tensorflow.keras import layers, models, Input
 # from tensorflow.keras import models
 
 
-# )
-data_dir = input("directory that contains solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
+#noramlisaton functions, can be done using keras preprocessinglayers which are present in newer versions of tensorflow, I am using tensorflow 2.4.1 I had a reson for this specific verions but I just can't remember
+def normalise_me(image, label):
+    image = tf.cast(image/255., tf.float32)
+    return image, label
 
+def center_me(image, label):
+    #image is really a batch of images and so axis=[1,2,3] and keepdims=True is needed so that it gets the mean and standard deviation for each individula image rather than across the batch
+    mean_1 = tf.math.reduce_mean(image, axis=[1,2,3], keepdims=True)
+    image = image - mean_1
+    return image, label
+
+def standardise_me(image, label):
+    std_val = tf.math.reduce_std(image, axis=[1,2,3], keepdims=True)
+    image = image / std_val
+    return image, label
+
+data_dir_1 = input("directory that contains detection_pixel images (maxpixel - avgpixel), solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
+
+data_dir_2 =
 
 #keras preprocessing, will resize images etc. create training and validation datasets
-train_data = keras.preprocessing.image_dataset_from_directory(
-    data_dir,
+train_data_1 = keras.preprocessing.image_dataset_from_directory(
+    data_dir_1,
     labels="inferred",
     label_mode="binary",
     class_names=None,
@@ -33,17 +49,23 @@ train_data = keras.preprocessing.image_dataset_from_directory(
     interpolation="bilinear",
 )
 
-def normalise(image, label):
-    image = tf.cast(image/255., tf.float32)
-    return image, label
+train_data_2 = keras.preprocessing.image_dataset_from_directory(
+    data_dir_2,
+    labels="inferred",
+    label_mode="binary",
+    class_names=None,
+    color_mode="grayscale",
+    batch_size=32,
+    image_size=(128, 128),
+    shuffle=True,
+    seed=169,
+    validation_split=0.2,
+    subset="training",
+    interpolation="bilinear",
+)
 
-#for element in train_data:
-#    print(f"element: {element}")
-print(f"type(train_data): {type(train_data)}")
-#print(f"train_data[0]: {train_data[0]}")
-train_data = train_data.map(normalise)
-val_data = keras.preprocessing.image_dataset_from_directory(
-    data_dir,
+val_data_1 = keras.preprocessing.image_dataset_from_directory(
+    data_dir_1,
     labels="inferred",
     label_mode="binary",
     class_names=None,
@@ -56,8 +78,35 @@ val_data = keras.preprocessing.image_dataset_from_directory(
     subset="validation",
     interpolation="bilinear",
 )
-val_data = val_data.map(normalise)
 
+val_data_2 = keras.preprocessing.image_dataset_from_directory(
+    data_dir_2,
+    labels="inferred",
+    label_mode="binary",
+    class_names=None,
+    color_mode="grayscale",
+    batch_size=32,
+    image_size=(128, 128),
+    shuffle=True,
+    seed=169,
+    validation_split=0.2,
+    subset="validation",
+    interpolation="bilinear",
+)
+#need to create new datasets like this as it doesn't seem to work properly if the dataset is modified in place for some reason
+train_norm_1 = train_data_1.map(normalise_me)
+train_cent_1 = train_norm_1.map(center_me)
+train_stan_1 = train_cent_1.map(standardise_me)
+val_norm_1 = val_data_1.map(normalise_me)
+val_cent_1 = val_norm_1.map(center_me)
+val_stan_1 = val_cent_1.map(standardise_me)
+
+train_norm_2 = train_data_2.map(normalise_me)
+train_cent_2 = train_norm_2.map(center_me)
+train_stan_2 = train_cent_2.map(standardise_me)
+val_norm_2 = val_data_2.map(normalise_me)
+val_cent_2 = val_norm_2.map(center_me)
+val_stan_2 = val_cent_2.map(standardise_me)
 
 #this creates a Sequential model, which can't handle multiple inputs
 """
@@ -99,25 +148,56 @@ model = Model(input_tensor, output_tensor)
 """
 #need to use keras functional api style to create model
 #input = Input(shape=(None,), dtype='int32', name='text') #dtype can be manually set and input can also be given a name e.g. 'text'
-inputs = keras.Input(shape=(128,128,1))
 #inputs has properties .shape and .dtype
-#create
+# input_tensor = keras.Input(shape=(128,128,1))
+detectpixel_input =keras.Input(shape=(128,128,1))
+maxframe_input = keras.Input(shape=(128,128,1))
+#framework for the detectpixel_input
+x_frame = layers.Conv2D(64, (3,3), activation="relu")(detectpixel_input)
+x_frame = layers.MaxPooling2D((2,2))(x_frame)
+x_frame = layers.Conv2D(64, (3,3), activation="relu")(x_frame)
+x_frame = layers.MaxPooling2D((2,2))(x_frame)
+x_frame = layers.Conv2D(64, (3,3), activation="relu")(x_frame)
+x_frame = layers.MaxPooling2D((2,2))(x_frame)
+x_frame = layers.Flatten()(x_frame)
+
+
+
+
+#framework for the maxframe input
+y_frame = layers.Conv2D(64, (3,3), activation="relu")(maxframe_input)
+y_frame = layers.MaxPooling2D((2,2))(y_frame)
+y_frame = layers.Conv2D(64, (3,3), activation="relu")(y_frame)
+y_frame = layers.MaxPooling2D((2,2))(y_frame)
+y_frame = layers.Conv2D(64, (3,3), activation="relu")(y_frame)
+y_frame = layers.MaxPooling2D((2,2))(y_frame)
+y_frame = layers.Flatten()(y_frame)
+
+#need to combine the two frameworks
+concat_layer = layers.Concatenate()([x_frame, y_frame])
+
+combo_layer = layers.Dense(512, activation="relu")(concat_layer)
+output = layers.Dense(1, activation="sigmoid")(combo_layer)
+
+model = models.Model([detectpixel_input, maxframe_input], outputs=output)
+
 
 #functional api uses same syntax as sequential style for compiling, evaluating, training
 
 model.summary()
-
+keras.utils.plot_model(model, "multi_input_keras.png", show_shapes=True)
 #compile the network
 from keras import optimizers
 
 model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate=0.1, momentum=0.1, nesterov=False, name="SGD"), metrics=["acc"])
 
 #fit the model to the data
+#steps_per_epoch is the number of training steps the code runs before beginning a new epoch, exclude this line to run over the whole dataset for each epoch
 history = model.fit(
-train_data,
-steps_per_epoch=100,
+[train_cent_1, train_cent_2],
+# steps_per_epoch=100,
 epochs=30,
-validation_data=val_data,
+validation_data=[val_cent_1, val_cent_2],
 validation_steps=50)
 
 

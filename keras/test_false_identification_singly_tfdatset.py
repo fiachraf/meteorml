@@ -69,8 +69,8 @@ file_dataset = image_dataset_from_directory(
    color_mode = "grayscale",
    batch_size=32,
    image_size = (128,128),
+   shuffle=False,
    interpolation = "bilinear")
-image_paths = file_dataset.file_paths
 labels_list = []
 #for x, y in file_dataset:
 #   labels_list.append(y)
@@ -80,11 +80,12 @@ file_dataset_norm = file_dataset.map(normalise_me)
 file_dataset_cent = file_dataset_norm.map(center_me)
 file_dataset_stan = file_dataset_cent.map(standardise_me)
 
+image_paths = file_dataset.file_paths
 pred_distribution_list = []
 prediction_list = []
 #index varaible used to keep track of file names as images are loaded in batches while the filenames is just one long list
 index = 0
-for images_batch, labels_batch in file_dataset:
+for images_batch, labels_batch in file_dataset_stan:
     prediction = CNN_model.predict(images_batch)
     #print(f"prediction: {prediction}")
     #print(f"type(prediction): {type(prediction)}")

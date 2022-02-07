@@ -518,7 +518,7 @@ def standardise_me(image_pair, label):
 #     subset="training",
 #     interpolation="bilinear",
 # )
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 # for image_batch, label_batch in test_ds_2:
 #     for image in image_batch:
 #         print(tf.shape(image))
@@ -543,38 +543,38 @@ import matplotlib.pyplot as plt
 #     plt.imshow(image_2)
 #     plt.show()
 
-test_ds_3 = cust_image_dataset_from_directory("/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
-                                "/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
-                                labels='inferred',
-                                label_mode='binary',
-                                class_names=None,
-                                color_mode='grayscale',
-                                batch_size=32,
-                                image_size=(128, 128),
-                                shuffle=False,
-                                seed=None,
-                                validation_split=None,
-                                subset=None,
-                                interpolation='bilinear',
-                                follow_links=False)
+# test_ds_3 = cust_image_dataset_from_directory("/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
+#                                 "/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
+#                                 labels='inferred',
+#                                 label_mode='binary',
+#                                 class_names=None,
+#                                 color_mode='grayscale',
+#                                 batch_size=32,
+#                                 image_size=(128, 128),
+#                                 shuffle=False,
+#                                 seed=None,
+#                                 validation_split=None,
+#                                 subset=None,
+#                                 interpolation='bilinear',
+#                                 follow_links=False)
 
-test_ds_3_norm = test_ds_3.map(normalise_me)
-test_ds_3_cent = test_ds_3_norm.map(center_me)
-test_ds_3_stan = test_ds_3_cent.map(standardise_me)
+# test_ds_3_norm = test_ds_3.map(normalise_me)
+# test_ds_3_cent = test_ds_3_norm.map(center_me)
+# test_ds_3_stan = test_ds_3_cent.map(standardise_me)
 
 ########################## latest test statements
-for image_pair_batch, label_batch in test_ds_3_stan:
-    print("test1", tf.shape(image_pair_batch), tf.shape(label_batch))
-
-    image_batch_1 = image_pair_batch[0]
-    image_batch_2 = image_pair_batch[1]
-
-    for image_1, image_2 in zip(image_batch_1, image_batch_2):
-        print("test4", tf.shape(image_1), tf.shape(image_2))
-        plt.imshow(image_1)
-        plt.show()
-        plt.imshow(image_2)
-        plt.show()
+# for image_pair_batch, label_batch in test_ds_3_stan:
+#     print("test1", tf.shape(image_pair_batch), tf.shape(label_batch))
+#
+#     image_batch_1 = image_pair_batch[0]
+#     image_batch_2 = image_pair_batch[1]
+#
+#     for image_1, image_2 in zip(image_batch_1, image_batch_2):
+#         print("test4", tf.shape(image_1), tf.shape(image_2))
+#         plt.imshow(image_1)
+#         plt.show()
+#         plt.imshow(image_2)
+#         plt.show()
 #############################
     # print(tf.shape(image_batch_1))
 # for image_1_batch, image_2_batch, label_batch in test_ds_3:

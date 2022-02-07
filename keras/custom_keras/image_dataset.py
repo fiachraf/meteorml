@@ -536,18 +536,18 @@ import matplotlib.pyplot as plt
 #     plt.imshow(image_2)
 #     plt.show()
 
-test_ds_3 = cust_image_dataset_from_directory("//mnt/local/fiachra/meteor_images/files/20220121_pngs",
-                                 "/mnt/local/fiachra/meteor_images/files/20220201_1_pngs",
+test_ds_3 = cust_image_dataset_from_directory("/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
+                                 "/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
                                  labels='inferred',
                                  label_mode='binary',
                                  class_names=None,
                                  color_mode='grayscale',
                                  batch_size=32,
                                  image_size=(128, 128),
-                                 shuffle=False,
-                                 seed=None,
-                                 validation_split=None,
-                                 subset=None,
+                                 shuffle=True,
+                                 seed=169,
+                                 validation_split=0.2,
+                                 subset="training",
                                  interpolation='bilinear',
                                  follow_links=False)
 

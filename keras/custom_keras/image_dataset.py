@@ -557,7 +557,7 @@ test_ds_3_stan = test_ds_3_cent.map(standardise_me)
 
 # for image_1_batch, image_2_batch, label_batch in test_ds_3:
 #     print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
-for image_1_batch, image_2_batch, label_batch in test_ds_3_cent:
+for image_1_batch, image_2_batch, label_batch in test_ds_3_stan:
     print("test")
     print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
     for image_1, image_2, label in zip(image_1_batch, image_2_batch, label_batch):

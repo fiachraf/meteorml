@@ -14,6 +14,7 @@ from tensorflow.keras import layers, models, Input
 import matplotlib.pyplot as plt
 import numpy as np
 
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 # import custom_image_dataset_from_directory as custom
 
 #neeed to have label as second input argument and label as the second value to be returned for these 3 functions
@@ -29,6 +30,7 @@ def center_me(image):
 
 def standardise_me(image):
     std_val = tf.math.reduce_std(image, axis=None)
+    print(f"std_val: {std_val}")
     image = tf.cast(image/std_val, tf.float32)
     return image
 
@@ -48,7 +50,7 @@ train_data_1 = keras.preprocessing.image_dataset_from_directory(
     shuffle=False,
     interpolation="bilinear",
 )
-
+files= train_data_1.file_paths
 # train_data_2 = keras.preprocessing.image_dataset_from_directory(
 #     data_dir_2,
 #     labels="inferred",
@@ -108,13 +110,31 @@ for images_batch, labels_batch in train_data_1:
         # plt.imshow(image)
         # plt.show()
         output_1 = normalise_me(image)
-        # plt.imshow(output_1)
-        # plt.show()
+        plt.imshow(output_1)
+        plt.show()
         output_2 = center_me(output_1)
         plt.imshow(output_2)
         plt.show()
-        # output_3 = standardise_me(output_2)
+        output_3 = standardise_me(output_2)
+        plt.imshow(output_3)
+        plt.show()
 
+        pil_image = load_img(files[0], color_mode = "grayscale", target_size = (128, 128), interpolation = "bilinear")
+        image_np_array = img_to_array(pil_image)
+        image_rescale = image_np_array/255.
+        print("numpy")
+        plt.imshow(image_rescale)
+        plt.show()
+        mean = np.mean(image_rescale)
+        print(f"mean: {mean}")
+        image_center = image_rescale - mean
+        plt.imshow(image_center)
+        plt.show()
+        std = np.std(image_center)
+        print(f"std: {std}")
+        image_stan = image_center / std
+        plt.imshow(image_stan)
+        plt.show()
         # #this bit is only needed to plot the image for visual demonstrations
         # #-------------------------------------------------------------------
         # #create plot of meteor_image and crop_image

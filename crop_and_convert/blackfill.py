@@ -212,26 +212,26 @@ def crop_detections(detection_info, fits_dir):
 
         #add some space around the meteor detection so that its not touching the edges
         #leftover terms need to be set to 0 outside if statements otherwise they wont be set if there's nothing left over which will cause an error with the blackfill.blackfill() line
-        left_side = left_side - 20
+        left_side = left_side - 0
         leftover_left = 0
         if left_side < 0:
             #this will be used later to determine how to fill in the rest of the image to make it square but also have the meteor centered in the image
             leftover_left = 0 - left_side
             left_side = 0
 
-        right_side = right_side + 20
+        right_side = right_side + 0
         leftover_right = 0
         if right_side > col_size:
             leftover_right = right_side - col_size
             right_side = col_size
 
-        top_side = top_side - 20
+        top_side = top_side - 0
         leftover_top = 0
         if top_side < 0:
             leftover_top = 0 - top_side
             top_side = 0
 
-        bottom_side = bottom_side + 20
+        bottom_side = bottom_side + 0
         leftover_bottom = 0
         if bottom_side > row_size:
             leftover_bottom = bottom_side - row_size
@@ -332,26 +332,26 @@ def crop_detections_maxframe(detection_info, fits_dir, time_slice=False):
 
         #add some space around the meteor detection so that its not touching the edges
         #leftover terms need to be set to 0 outside if statements otherwise they wont be set if there's nothing left over which will cause an error with the blackfill.blackfill() line
-        left_side = left_side - 20
+        left_side = left_side - 0
         leftover_left = 0
         if left_side < 0:
             #this will be used later to determine how to fill in the rest of the image to make it square but also have the meteor centered in the image
             leftover_left = 0 - left_side
             left_side = 0
 
-        right_side = right_side + 20
+        right_side = right_side + 0
         leftover_right = 0
         if right_side > col_size:
             leftover_right = right_side - col_size
             right_side = col_size
 
-        top_side = top_side - 20
+        top_side = top_side - 0
         leftover_top = 0
         if top_side < 0:
             leftover_top = 0 - top_side
             top_side = 0
 
-        bottom_side = bottom_side + 20
+        bottom_side = bottom_side + 0
         leftover_bottom = 0
         if bottom_side > row_size:
             leftover_bottom = bottom_side - row_size

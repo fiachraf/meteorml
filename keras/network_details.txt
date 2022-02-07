@@ -21,3 +21,7 @@ trained on 20220204_2_pngs
 
 meteorml_20220205.h5
 trained on 20220121_pngs
+
+meteorml_20220206.h5
+trained on 20220121_pngs
+trained over whole dataset each epoch

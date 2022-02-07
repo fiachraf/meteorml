@@ -50,9 +50,9 @@ print(f"type(image_paths): {type(image_paths)}")
 print(f"type(train_data): {type(train_data)}")
 # print(f"tf.shape(train_data): {tf.shape(train_data)}")
 
-normalise_data = train_data.map(normalise_me)
-center_data = normalise_data.map(center_me)
-standard_data = center_data.map(standardise_me)
+train_norm = train_data.map(normalise_me)
+train_cent = train_norm.map(center_me)
+train_stan = train_cent.map(standardise_me)
 
 # print(f"train_data.shape(): {train_data.shape()}")
 
@@ -62,7 +62,7 @@ standard_data = center_data.map(standardise_me)
 #images_batch and labels_batch are tensorflow.python.framework.ops.EagerTensor, they have a len of batch_size as defined in the keras.preprocessing.image_dataset_from_directory() function. Every time you get to the end of one batch, it gets replaced by the nex batch and so indexing can be a little tricky
 #image_paths is a python list that contains all the full file paths of the images found by the keras.preprocessing.image_dataset_from_directory() and does not have any batches and so to pair up the file names and the actual entries in the tensors, you need to keep track of different indices
 index = 0
-for images_batch, labels_batch in center_data:
+for images_batch, labels_batch in train_stan:
     print(f"len(images_batch): {len(images_batch)}")
     #could do line to take slice from image_paths which has same length as images_batch and then remove these from the original list so that things can be done in batches rather than singly
 

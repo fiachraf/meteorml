@@ -14,6 +14,8 @@ from tensorflow.keras import layers, models, Input
 import matplotlib.pyplot as plt
 import numpy as np
 
+# import custom_image_dataset_from_directory as custom
+
 #neeed to have label as second input argument and label as the second value to be returned for these 3 functions
 def normalise_me(image):
     image = tf.cast(image/255., tf.float32)
@@ -32,11 +34,11 @@ def standardise_me(image):
 
 
 
-data_dir = input("directory that contains solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
+data_dir_1 = input("directory that contains solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
+# data_dir_2 = input("directory_2")
 
-
-train_data = keras.preprocessing.image_dataset_from_directory(
-    data_dir,
+train_data_1 = keras.preprocessing.image_dataset_from_directory(
+    data_dir_1,
     labels="inferred",
     label_mode="binary",
     class_names=None,
@@ -46,15 +48,34 @@ train_data = keras.preprocessing.image_dataset_from_directory(
     shuffle=False,
     interpolation="bilinear",
 )
-image_paths = train_data.file_paths
-print(f"type(image_paths): {type(image_paths)}")
-print(f"type(train_data): {type(train_data)}")
+
+# train_data_2 = keras.preprocessing.image_dataset_from_directory(
+#     data_dir_2,
+#     labels="inferred",
+#     label_mode="binary",
+#     class_names=None,
+#     color_mode="grayscale",
+#     batch_size=32,
+#     image_size=(128, 128),
+#     shuffle=False,
+#     interpolation="bilinear",
+# )
+
+# train_data_1_images, train_data_1_labels = tf.data.Dataset.unzip(train_data)
+# print(f"tf.shape(train_data_1): {tf.shape(train_data_1)}")
+# print(f"tf.shape(train_data_2): {tf.shape(train_data_2)}")
+# print(f"tf.shape(train_data_combo): {tf.shape(train_data_combo)}")
+
+# train_data_combo = tf.data.Dataset.zip((train_data_1, train_data_2))
+# image_paths = train_data.file_paths
+# print(f"type(image_paths): {type(image_paths)}")
+# print(f"type(train_data): {type(train_data)}")
 
 # layer = layers.LayerNormalization()
 # train_data = layer(train_data)
-# train_data = train_data.map(normalise_me)
-# train_data = train_data.map(center_me)
-# train_data = train_data.map(standardise_me)
+# train_data_1 = train_data_1.map(normalise_me)
+# train_data_1 = train_data_1.map(center_me)
+# train_data_1 = train_data_1.map(standardise_me)
 
 # print(f"train_data.shape(): {train_data.shape()}")
 
@@ -64,7 +85,10 @@ print(f"type(train_data): {type(train_data)}")
 #images_batch and labels_batch are tensorflow.python.framework.ops.EagerTensor, they have a len of batch_size as defined in the keras.preprocessing.image_dataset_from_directory() function. Every time you get to the end of one batch, it gets replaced by the nex batch and so indexing can be a little tricky
 #image_paths is a python list that contains all the full file paths of the images found by the keras.preprocessing.image_dataset_from_directory() and does not have any batches and so to pair up the file names and the actual entries in the tensors, you need to keep track of different indices
 index = 0
-for images_batch, labels_batch in train_data:
+for images_batch, labels_batch in train_data_1:
+
+    print(f"tf.shape(images_batch): {tf.shape(images_batch)}")
+
     # print(f"len(images_batch): {len(images_batch)}")
     #could do line to take slice from image_paths which has same length as images_batch and then remove these from the original list so that things can be done in batches rather than singly
 

@@ -33,6 +33,9 @@ data_dir_1 = input("directory that contains detection_pixel images (maxpixel - a
 
 data_dir_2 = input("directory containing maxframe images: ")
 
+output_model_name = input("model name that you want to give it e.g. meteorml_20220201 (do not include the .5): ")
+
+
 #keras preprocessing, will resize images etc. create training and validation datasets
 train_data = image_dataset.cust_image_dataset_from_directory(
     data_dir_1,
@@ -216,7 +219,7 @@ validation_data=val_stan)
 
 
 
-model.save("meteorml_20210121.h5")
+model.save(output_model_name + ".h5")
 
 
 import matplotlib.pyplot as plt
@@ -232,12 +235,12 @@ plt.plot(epochs, acc, "bo", label="Training acc")
 plt.plot(epochs, val_acc, "b", label="Validation acc")
 plt.title("Training and validation accuracy")
 plt.legend()
-plt.savefig("accuracy_20210121.png")
+plt.savefig("accuracy" + output_model_name + ".png")
 plt.figure()
 
 plt.plot(epochs, loss, "bo", label="Training loss")
 plt.plot(epochs, val_loss, "b", label="Validation loss")
 plt.title("Training and validation loss")
 plt.legend()
-plt.savefig("loss_20210121.png")
+plt.savefig("loss" + output_model_name + ".png")
 plt.show()

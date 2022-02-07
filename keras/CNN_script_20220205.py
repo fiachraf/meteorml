@@ -69,8 +69,8 @@ train_data = keras.preprocessing.image_dataset_from_directory(
 
 #need to create new datasets like this as it doesn't seem to work properly if the dataset is modified in place for some reason
 train_norm = train_data.map(normalise_me)
-train_cent = train_data.map(center_me)
-train_stan = train_data.map(standardise_me)
+train_cent = train_norm.map(center_me)
+train_stan = train_cent.map(standardise_me)
 
 
 val_data = keras.preprocessing.image_dataset_from_directory(
@@ -88,8 +88,8 @@ val_data = keras.preprocessing.image_dataset_from_directory(
     interpolation="bilinear",
 )
 val_norm = val_data.map(normalise_me)
-val_cent = val_data.map(center_me)
-val_stan = val_data.map(standardise_me)
+val_cent = val_norm.map(center_me)
+val_stan = val_cent.map(standardise_me)
 
 #sample netowrk, first layer has to include an argument for input shape
 # model = models.Sequential()
@@ -108,6 +108,18 @@ val_stan = val_data.map(standardise_me)
 #prints a summary of the model
 #model.summary
 
+#import matplotlib.pyplot as plt
+#
+#for image_1_batch, label_batch in train_cent:
+#    print("test")
+#    print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
+#    for image_1, image_2, label in zip(image_1_batch, image_2_batch, label_batch):
+#        # print(tf.shape(image_1), tf.shape(image_2), tf.shape(label))
+#        print(f"label: {label}")
+#        plt.imshow(image_1)
+#        plt.show()
+#        plt.imshow(image_2)
+#        plt.show()
 #similar recreation of model used by Peter S. Gural as shown in Table 3 in his paper:
 # Deep learning algorithms applied to the classification of video meteor detections, Peter S. Gural, doi:10.1093/mnras/stz2456
 model = models.Sequential()

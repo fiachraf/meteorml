@@ -442,26 +442,32 @@ def cust_paths_and_labels_to_dataset(image_paths_1,
 
 
 #noramlisaton functions, can be done using keras preprocessinglayers which are present in newer versions of tensorflow, I am using tensorflow 2.4.1 I had a reson for this specific verions but I just can't remember
-def normalise_me(image_1, image_2, label):
+def normalise_me(image_pair, label):
+    image_1 = image_pair[0]
+    image_2 = image_pair[1]
     image_1 = tf.cast(image_1/255., tf.float32)
     image_2 = tf.cast(image_2/255., tf.float32)
-    return image_1, image_2, label
+    return (image_1, image_2), label
 
-def center_me(image_1, image_2, label):
+def center_me(image_pair, label):
     #image_1 is really a batch of image_1s and so axis=[1,2,3] and keepdims=True is needed so that it gets the mean and standard deviation for each individula image_1 rather than across the batch
+    image_1 = image_pair[0]
+    image_2 = image_pair[1]
     mean_1 = tf.math.reduce_mean(image_1, axis=[1,2,3], keepdims=True)
     mean_2 = tf.math.reduce_mean(image_2, axis=[1,2,3], keepdims=True)
     print(f"mean_1: {mean_1}, mean_2: {mean_2}")
     image_1 = image_1 - mean_1
     image_2 = image_2 - mean_2
-    return image_1, image_2, label
+    return (image_1, image_2), label
 
-def standardise_me(image_1, image_2, label):
+def standardise_me(image_pair, label):
+    image_1 = image_pair[0]
+    image_2 = image_pair[1]
     std_val_1 = tf.math.reduce_std(image_1, axis=[1,2,3], keepdims=True)
     image_1 = image_2 / std_val_1
     std_val_2 = tf.math.reduce_std(image_2, axis=[1,2,3], keepdims=True)
     image_2 = image_2 / std_val_2
-    return image_1, image_2, label
+    return (image_1, image_2), label
 
 
 # image_paths_1, labels_1, class_names_1 = dataset_utils.index_directory(
@@ -537,25 +543,40 @@ import matplotlib.pyplot as plt
 #     plt.imshow(image_2)
 #     plt.show()
 
-#test_ds_3 = cust_image_dataset_from_directory("//mnt/local/fiachra/meteor_images/files/20220121_pngs",
-#                                 "/mnt/local/fiachra/meteor_images/files/20220201_1_pngs",
-#                                 labels='inferred',
-#                                 label_mode='binary',
-#                                 class_names=None,
-#                                 color_mode='grayscale',
-#                                 batch_size=32,
-#                                 image_size=(128, 128),
-#                                 shuffle=False,
-#                                 seed=None,
-#                                 validation_split=None,
-#                                 subset=None,
-#                                 interpolation='bilinear',
-#                                 follow_links=False)
-#
-#test_ds_3_norm = test_ds_3.map(normalise_me)
-#test_ds_3_cent = test_ds_3_norm.map(center_me)
-#test_ds_3_stan = test_ds_3_cent.map(standardise_me)
+test_ds_3 = cust_image_dataset_from_directory("/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
+                                "/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
+                                labels='inferred',
+                                label_mode='binary',
+                                class_names=None,
+                                color_mode='grayscale',
+                                batch_size=32,
+                                image_size=(128, 128),
+                                shuffle=False,
+                                seed=None,
+                                validation_split=None,
+                                subset=None,
+                                interpolation='bilinear',
+                                follow_links=False)
 
+test_ds_3_norm = test_ds_3.map(normalise_me)
+test_ds_3_cent = test_ds_3_norm.map(center_me)
+test_ds_3_stan = test_ds_3_cent.map(standardise_me)
+
+########################## latest test statements
+for image_pair_batch, label_batch in test_ds_3_stan:
+    print("test1", tf.shape(image_pair_batch), tf.shape(label_batch))
+
+    image_batch_1 = image_pair_batch[0]
+    image_batch_2 = image_pair_batch[1]
+
+    for image_1, image_2 in zip(image_batch_1, image_batch_2):
+        print("test4", tf.shape(image_1), tf.shape(image_2))
+        plt.imshow(image_1)
+        plt.show()
+        plt.imshow(image_2)
+        plt.show()
+#############################
+    # print(tf.shape(image_batch_1))
 # for image_1_batch, image_2_batch, label_batch in test_ds_3:
 #     print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
 #for image_1_batch, image_2_batch, label_batch in test_ds_3_stan:

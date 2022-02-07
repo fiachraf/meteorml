@@ -434,7 +434,8 @@ def cust_paths_and_labels_to_dataset(image_paths_1,
 
   if label_mode:
     label_ds = dataset_utils.labels_to_dataset(labels, label_mode, num_classes)
-    img_ds = dataset_ops.Dataset.zip((img_ds_1, img_ds_2, label_ds))
+    img_ds = dataset_ops.Dataset.zip((img_ds_1, img_ds_2))
+    img_ds = dataset_ops.Dataset.zip((img_ds, label_ds))
   else:
     img_ds = dataset_ops.Dataset.zip((img_ds_1, img_ds_2))
   return img_ds
@@ -536,37 +537,37 @@ import matplotlib.pyplot as plt
 #     plt.imshow(image_2)
 #     plt.show()
 
-test_ds_3 = cust_image_dataset_from_directory("/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
-                                 "/home/fiachra/Downloads/Meteor_Files/20210201_pngs",
-                                 labels='inferred',
-                                 label_mode='binary',
-                                 class_names=None,
-                                 color_mode='grayscale',
-                                 batch_size=32,
-                                 image_size=(128, 128),
-                                 shuffle=True,
-                                 seed=169,
-                                 validation_split=0.2,
-                                 subset="training",
-                                 interpolation='bilinear',
-                                 follow_links=False)
-
-test_ds_3_norm = test_ds_3.map(normalise_me)
-test_ds_3_cent = test_ds_3_norm.map(center_me)
-test_ds_3_stan = test_ds_3_cent.map(standardise_me)
+#test_ds_3 = cust_image_dataset_from_directory("//mnt/local/fiachra/meteor_images/files/20220121_pngs",
+#                                 "/mnt/local/fiachra/meteor_images/files/20220201_1_pngs",
+#                                 labels='inferred',
+#                                 label_mode='binary',
+#                                 class_names=None,
+#                                 color_mode='grayscale',
+#                                 batch_size=32,
+#                                 image_size=(128, 128),
+#                                 shuffle=False,
+#                                 seed=None,
+#                                 validation_split=None,
+#                                 subset=None,
+#                                 interpolation='bilinear',
+#                                 follow_links=False)
+#
+#test_ds_3_norm = test_ds_3.map(normalise_me)
+#test_ds_3_cent = test_ds_3_norm.map(center_me)
+#test_ds_3_stan = test_ds_3_cent.map(standardise_me)
 
 # for image_1_batch, image_2_batch, label_batch in test_ds_3:
 #     print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
-for image_1_batch, image_2_batch, label_batch in test_ds_3_stan:
-    print("test")
-    print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
-    for image_1, image_2, label in zip(image_1_batch, image_2_batch, label_batch):
-        # print(tf.shape(image_1), tf.shape(image_2), tf.shape(label))
-        print(f"label: {label}")
-        plt.imshow(image_1)
-        plt.show()
-        plt.imshow(image_2)
-        plt.show()
+#for image_1_batch, image_2_batch, label_batch in test_ds_3_stan:
+#    print("test")
+#    print(tf.shape(image_1_batch), tf.shape(image_2_batch), tf.shape(label_batch))
+#    for image_1, image_2, label in zip(image_1_batch, image_2_batch, label_batch):
+#        # print(tf.shape(image_1), tf.shape(image_2), tf.shape(label))
+#        print(f"label: {label}")
+#        plt.imshow(image_1)
+#        plt.show()
+#        plt.imshow(image_2)
+#        plt.show()
     # print(batch)
     # print(tf.shape(batch))
     # for triple in batch:

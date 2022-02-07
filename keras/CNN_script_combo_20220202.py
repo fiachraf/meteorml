@@ -11,7 +11,7 @@ tf.config.threading.set_inter_op_parallelism_threads(16)
 from tensorflow import keras
 from tensorflow.keras import layers, models, Input
 # from tensorflow.keras import models
-
+from custom_keras import image_dataset
 
 #noramlisaton functions, can be done using keras preprocessinglayers which are present in newer versions of tensorflow, I am using tensorflow 2.4.1 I had a reson for this specific verions but I just can't remember
 def normalise_me(image, label):
@@ -31,25 +31,11 @@ def standardise_me(image, label):
 
 data_dir_1 = input("directory that contains detection_pixel images (maxpixel - avgpixel), solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
 
-data_dir_2 =
+data_dir_2 = input("directory containing maxframe images: ")
 
 #keras preprocessing, will resize images etc. create training and validation datasets
-train_data_1 = keras.preprocessing.image_dataset_from_directory(
+train_data = image_dataset.cust_image_dataset_from_directory(
     data_dir_1,
-    labels="inferred",
-    label_mode="binary",
-    class_names=None,
-    color_mode="grayscale",
-    batch_size=32,
-    image_size=(128, 128),
-    shuffle=True,
-    seed=169,
-    validation_split=0.2,
-    subset="training",
-    interpolation="bilinear",
-)
-
-train_data_2 = keras.preprocessing.image_dataset_from_directory(
     data_dir_2,
     labels="inferred",
     label_mode="binary",
@@ -64,22 +50,8 @@ train_data_2 = keras.preprocessing.image_dataset_from_directory(
     interpolation="bilinear",
 )
 
-val_data_1 = keras.preprocessing.image_dataset_from_directory(
+val_data = image_dataset.cust_image_dataset_from_directory(
     data_dir_1,
-    labels="inferred",
-    label_mode="binary",
-    class_names=None,
-    color_mode="grayscale",
-    batch_size=32,
-    image_size=(128, 128),
-    shuffle=True,
-    seed=169,
-    validation_split=0.2,
-    subset="validation",
-    interpolation="bilinear",
-)
-
-val_data_2 = keras.preprocessing.image_dataset_from_directory(
     data_dir_2,
     labels="inferred",
     label_mode="binary",
@@ -93,20 +65,15 @@ val_data_2 = keras.preprocessing.image_dataset_from_directory(
     subset="validation",
     interpolation="bilinear",
 )
+
 #need to create new datasets like this as it doesn't seem to work properly if the dataset is modified in place for some reason
-train_norm_1 = train_data_1.map(normalise_me)
-train_cent_1 = train_norm_1.map(center_me)
-train_stan_1 = train_cent_1.map(standardise_me)
-val_norm_1 = val_data_1.map(normalise_me)
-val_cent_1 = val_norm_1.map(center_me)
-val_stan_1 = val_cent_1.map(standardise_me)
+train_norm = train_data.map(image_dataset.normalise_me)
+train_cent = train_norm.map(image_dataset.center_me)
+train_stan = train_cent.map(image_dataset.standardise_me)
+val_norm = val_data.map(image_dataset.normalise_me)
+val_cent = val_norm.map(image_dataset.center_me)
+val_stan = val_cent.map(image_dataset.standardise_me)
 
-train_norm_2 = train_data_2.map(normalise_me)
-train_cent_2 = train_norm_2.map(center_me)
-train_stan_2 = train_cent_2.map(standardise_me)
-val_norm_2 = val_data_2.map(normalise_me)
-val_cent_2 = val_norm_2.map(center_me)
-val_stan_2 = val_cent_2.map(standardise_me)
 
 #this creates a Sequential model, which can't handle multiple inputs
 """
@@ -185,7 +152,8 @@ model = models.Model([detectpixel_input, maxframe_input], outputs=output)
 #functional api uses same syntax as sequential style for compiling, evaluating, training
 
 model.summary()
-keras.utils.plot_model(model, "multi_input_keras.png", show_shapes=True)
+#requires pydot to be installed
+#keras.utils.plot_model(model, "multi_input_keras.png", show_shapes=True)
 #compile the network
 from keras import optimizers
 
@@ -194,11 +162,11 @@ model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate
 #fit the model to the data
 #steps_per_epoch is the number of training steps the code runs before beginning a new epoch, exclude this line to run over the whole dataset for each epoch
 history = model.fit(
-[train_cent_1, train_cent_2],
+train_stan,
 # steps_per_epoch=100,
 epochs=30,
-validation_data=[val_cent_1, val_cent_2],
-validation_steps=50)
+validation_data=val_stan)
+#validation_steps=50)
 
 
 #unsure which set to call the validation set and which to call the testing set. It seems several sources use them to refer to the wrong sets but they are two different sets. One is used while training the network so that it can determine its performance and the other is used to provide a final value for the network's performance when it is in its final form/iteration

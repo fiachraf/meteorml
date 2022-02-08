@@ -148,7 +148,7 @@ model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate
 history = model.fit(
 train_stan,
 # steps_per_epoch=36,
-epochs=30,
+epochs=15,
 validation_data=val_stan)
 # validation_steps=36)
 

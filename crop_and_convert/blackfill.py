@@ -241,8 +241,8 @@ def crop_detections(detection_info, fits_dir):
         #get cropped image of the meteor detection
         #first index set is for row selection, second index set is for column selection
         crop_image = detect_only_frames[top_side:bottom_side, left_side:right_side]
-        square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
-
+        # square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
+        square_crop_image = crop_image
         # #this bit is only needed to plot the image for visual demonstrations
         # #-------------------------------------------------------------------
         # #create plot of meteor_image and crop_image
@@ -284,7 +284,7 @@ def crop_detections_maxframe(detection_info, fits_dir, time_slice=False):
     returns the cropped image as a Numpy array
     """
 
-    print("should change blackfill to a gaussian noise fill or solid fill of average intensity")
+    #print("should change blackfill to a gaussian noise fill or solid fill of average intensity")
     fits_file_name = detection_info[0]
     meteor_num = detection_info[2]
     num_segments = detection_info[3]
@@ -361,8 +361,8 @@ def crop_detections_maxframe(detection_info, fits_dir, time_slice=False):
         #get cropped image of the meteor detection
         #first index set is for row selection, second index set is for column selection
         crop_image = max_frame_image[top_side:bottom_side, left_side:right_side]
-        square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
-
+        # square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
+        square_crop_image = crop_image
         # #this bit is only needed to plot the image for visual demonstrations
         # #-------------------------------------------------------------------
         # #create plot of meteor_image and crop_image

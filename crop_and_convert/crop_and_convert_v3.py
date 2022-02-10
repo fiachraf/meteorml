@@ -156,7 +156,7 @@ for dir_name in top_directories:
 
                                 if len((find_fits_file :=  blackfill.search_dirs(fits_file_name, chosen_dir=cwd, file_or_folder="file", exact_match=True, search_subdirs=False))) == 1:
                                     # print("test2")
-                                    square_crop_image = blackfill.crop_detections_maxframe(detection_entry, cwd, time_slice = True)
+                                    square_crop_image = blackfill.crop_detections(detection_entry, cwd)
                                     try:
                                         fits_not_analysed.remove((cwd, fits_file_name))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image
@@ -168,7 +168,7 @@ for dir_name in top_directories:
                                     im.save(home_dir + "/" + output_dir + "/" + dir_name + "_png" + "/" + fits_file_name[:-5] + "_" + str(int(meteor_num)) + ".png")
 
                                 elif len((find_fits_file := blackfill.search_dirs(fits_file_name, chosen_dir=home_dir, file_or_folder="file", exact_match=True, search_subdirs=True))) == 1:
-                                    square_crop_image = blackfill.crop_detections_maxframe(detection_entry, find_fits_file[0][0], time_slice = True)
+                                    square_crop_image = blackfill.crop_detections(detection_entry, find_fits_file[0][0])
                                     try:
                                         fits_not_analysed.remove((find_fits_file[0][0], find_fits_file[0][1]))
                                         #put in try statement as, if the same fits is analysed multiple times because of multiple detections in the same image

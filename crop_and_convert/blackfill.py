@@ -212,26 +212,26 @@ def crop_detections(detection_info, fits_dir):
 
         #add some space around the meteor detection so that its not touching the edges
         #leftover terms need to be set to 0 outside if statements otherwise they wont be set if there's nothing left over which will cause an error with the blackfill.blackfill() line
-        left_side = left_side - 0
+        left_side = left_side - 20
         leftover_left = 0
         if left_side < 0:
             #this will be used later to determine how to fill in the rest of the image to make it square but also have the meteor centered in the image
             leftover_left = 0 - left_side
             left_side = 0
 
-        right_side = right_side + 0
+        right_side = right_side + 20
         leftover_right = 0
         if right_side > col_size:
             leftover_right = right_side - col_size
             right_side = col_size
 
-        top_side = top_side - 0
+        top_side = top_side - 20
         leftover_top = 0
         if top_side < 0:
             leftover_top = 0 - top_side
             top_side = 0
 
-        bottom_side = bottom_side + 0
+        bottom_side = bottom_side + 20
         leftover_bottom = 0
         if bottom_side > row_size:
             leftover_bottom = bottom_side - row_size
@@ -241,8 +241,8 @@ def crop_detections(detection_info, fits_dir):
         #get cropped image of the meteor detection
         #first index set is for row selection, second index set is for column selection
         crop_image = detect_only_frames[top_side:bottom_side, left_side:right_side]
-        square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
-
+        # square_crop_image = blackfill(crop_image, leftover_top, leftover_bottom, leftover_left, leftover_right)
+        square_crop_image = crop_image
         # #this bit is only needed to plot the image for visual demonstrations
         # #-------------------------------------------------------------------
         # #create plot of meteor_image and crop_image
@@ -332,26 +332,26 @@ def crop_detections_maxframe(detection_info, fits_dir, time_slice=False):
 
         #add some space around the meteor detection so that its not touching the edges
         #leftover terms need to be set to 0 outside if statements otherwise they wont be set if there's nothing left over which will cause an error with the blackfill.blackfill() line
-        left_side = left_side - 0
+        left_side = left_side - 20
         leftover_left = 0
         if left_side < 0:
             #this will be used later to determine how to fill in the rest of the image to make it square but also have the meteor centered in the image
             leftover_left = 0 - left_side
             left_side = 0
 
-        right_side = right_side + 0
+        right_side = right_side + 20
         leftover_right = 0
         if right_side > col_size:
             leftover_right = right_side - col_size
             right_side = col_size
 
-        top_side = top_side - 0
+        top_side = top_side - 20
         leftover_top = 0
         if top_side < 0:
             leftover_top = 0 - top_side
             top_side = 0
 
-        bottom_side = bottom_side + 0
+        bottom_side = bottom_side + 20
         leftover_bottom = 0
         if bottom_side > row_size:
             leftover_bottom = bottom_side - row_size

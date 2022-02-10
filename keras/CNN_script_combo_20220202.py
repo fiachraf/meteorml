@@ -127,11 +127,10 @@ x_frame = layers.Conv2D(64, (3,3), activation="relu")(detectpixel_input)
 x_frame = layers.MaxPooling2D((2,2))(x_frame)
 x_frame = layers.Conv2D(64, (3,3), activation="relu")(x_frame)
 x_frame = layers.MaxPooling2D((2,2))(x_frame)
-x_frame = layers.Conv2D(64, (3,3), activation="relu")(x_frame)
-x_frame = layers.MaxPooling2D((2,2))(x_frame)
+#x_frame = layers.Conv2D(64, (3,3), activation="relu")(x_frame)
+#x_frame = layers.MaxPooling2D((2,2))(x_frame)
 x_frame = layers.Flatten()(x_frame)
-
-
+x_frame = layers.Dense(256, activation="relu")(x_frame)
 
 
 #framework for the maxframe input
@@ -139,14 +138,15 @@ y_frame = layers.Conv2D(64, (3,3), activation="relu")(maxframe_input)
 y_frame = layers.MaxPooling2D((2,2))(y_frame)
 y_frame = layers.Conv2D(64, (3,3), activation="relu")(y_frame)
 y_frame = layers.MaxPooling2D((2,2))(y_frame)
-y_frame = layers.Conv2D(64, (3,3), activation="relu")(y_frame)
-y_frame = layers.MaxPooling2D((2,2))(y_frame)
+#y_frame = layers.Conv2D(64, (3,3), activation="relu")(y_frame)
+#y_frame = layers.MaxPooling2D((2,2))(y_frame)
 y_frame = layers.Flatten()(y_frame)
+y_frame = layers.Dense(256, activation="relu")(y_frame)
 
 #need to combine the two frameworks
 concat_layer = layers.Concatenate()([x_frame, y_frame])
 
-combo_layer = layers.Dense(512, activation="relu")(concat_layer)
+combo_layer = layers.Dense(256, activation="relu")(concat_layer)
 output = layers.Dense(1, activation="sigmoid")(combo_layer)
 
 model = models.Model([detectpixel_input, maxframe_input], outputs=output)
@@ -160,14 +160,14 @@ model.summary()
 #compile the network
 from keras import optimizers
 
-model.compile(loss="binary_crossentropy", optimizer=optimizers.SGD(learning_rate=0.1, momentum=0.1, nesterov=False, name="SGD"), metrics=["acc"])
+model.compile(loss="binary_crossentropy", optimizer=optimizers.Adam(), metrics=["acc"])
 
 #fit the model to the data
 #steps_per_epoch is the number of training steps the code runs before beginning a new epoch, exclude this line to run over the whole dataset for each epoch
 history = model.fit(
 train_stan,
 # steps_per_epoch=100,
-epochs=30,
+epochs=15,
 validation_data=val_stan)
 #validation_steps=50)
 

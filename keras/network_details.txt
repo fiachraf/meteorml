@@ -14,10 +14,10 @@ one had 5x5 size convolutions
 other one had only one convolution and one MaxPooling2D layer
 
 20220204_1.h5
-trained on 20220204_1_pngs
+trained on 20220201_1_pngs
 
 20220204_2.h5
-trained on 20220204_2_pngs
+trained on 20220201_2_pngs
 
 meteorml_20220205.h5
 trained on 20220121_pngs

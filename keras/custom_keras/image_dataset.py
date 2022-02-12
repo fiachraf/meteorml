@@ -543,49 +543,49 @@ def standardise_me(image_pair, label):
 #     plt.imshow(image_2)
 #     plt.show()
 
-test_ds_3 = cust_image_dataset_from_directory("/mnt/local/fiachra/meteor_images/files/20220121_pngs",
-                                 "/mnt/local/fiachra/meteor_images/files/20220201_2_pngs",
-                                 labels='inferred',
-                                 label_mode='binary',
-                                 class_names=None,
-                                 color_mode='grayscale',
-                                 batch_size=32,
-                                 image_size=(128, 128),
-                                 shuffle=True,
-                                 seed=223,
-                                 validation_split=None,
-                                 subset=None,
-                                 interpolation='bilinear',
-                                 follow_links=False)
-
-test_ds_3_norm = test_ds_3.map(normalise_me)
-test_ds_3_cent = test_ds_3_norm.map(center_me)
-test_ds_3_stan = test_ds_3_cent.map(standardise_me)
-
-########################## latest test statements
-import matplotlib.pyplot as plt
-for image_pair_batch, label_batch in test_ds_3:
-    print("test1", tf.shape(image_pair_batch), tf.shape(label_batch))
+#test_ds_3 = cust_image_dataset_from_directory("/mnt/local/fiachra/meteor_images/files/20220211_pngs",
+#                                 "/mnt/local/fiachra/meteor_images/files/20220201_2_pngs",
+#                                 labels='inferred',
+#                                 label_mode='binary',
+#                                 class_names=None,
+#                                 color_mode='grayscale',
+#                                 batch_size=32,
+#                                 image_size=(128, 128),
+#                                 shuffle=True,
+#                                 seed=223,
+#                                 validation_split=None,
+#                                 subset=None,
+#                                 interpolation='bilinear',
+#                                 follow_links=False)
 #
-    image_batch_1 = image_pair_batch[0]
-    image_batch_2 = image_pair_batch[1]
+#test_ds_3_norm = test_ds_3.map(normalise_me)
+#test_ds_3_cent = test_ds_3_norm.map(center_me)
+#test_ds_3_stan = test_ds_3_cent.map(standardise_me)
 #
-    for image_1, image_2 in zip(image_batch_1, image_batch_2):
-        print("test4", tf.shape(image_1), tf.shape(image_2))
-        image_1 = image_1.numpy().squeeze()
-        image_2 = image_2.numpy().squeeze()
-
-        # #create plot of meteor_image and crop_image
-        # # has full image displayed on left side and then the can do two cropped images displayed on the right side
-        fig, axd = plt.subplot_mosaic([['image_1', 'image_2'],
-                                    ['image_1','image_2']])
-        axd['image_1'].imshow(image_1)
-        axd['image_2'].imshow(image_2)
-        # # change the size of the figure
-        # fig.set_size_inches(18.5, 10.5)
-        #
-        # display the plot
-        plt.show()
+########################### latest test statements
+#import matplotlib.pyplot as plt
+#for image_pair_batch, label_batch in test_ds_3_stan:
+#    print("test1", tf.shape(image_pair_batch), tf.shape(label_batch))
+##
+#    image_batch_1 = image_pair_batch[0]
+#    image_batch_2 = image_pair_batch[1]
+##
+#    for image_1, image_2 in zip(image_batch_1, image_batch_2):
+#        print("test4", tf.shape(image_1), tf.shape(image_2))
+#        image_1 = image_1.numpy().squeeze()
+#        image_2 = image_2.numpy().squeeze()
+#
+#        # #create plot of meteor_image and crop_image
+#        # # has full image displayed on left side and then the can do two cropped images displayed on the right side
+#        fig, axd = plt.subplot_mosaic([['image_1', 'image_2'],
+#                                    ['image_1','image_2']])
+#        axd['image_1'].imshow(image_1)
+#        axd['image_2'].imshow(image_2)
+#        # # change the size of the figure
+#        # fig.set_size_inches(18.5, 10.5)
+#        #
+#        # display the plot
+#        plt.show()
         #
         # #-------------------------------------------------------------------
         #plt.imshow(image_1)

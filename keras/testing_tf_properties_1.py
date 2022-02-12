@@ -18,22 +18,26 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 # import custom_image_dataset_from_directory as custom
 
 #neeed to have label as second input argument and label as the second value to be returned for these 3 functions
-def normalise_me(image):
+def normalise_me(image,label):
     image = tf.cast(image/255., tf.float32)
-    return image
+    return image, label
 
-def center_me(image):
+def center_me(image, label):
     mean_val = tf.math.reduce_mean(image, axis=None)
     print(f"mean_val: {mean_val}")
     image = tf.cast(image - mean_val, tf.float32)
-    return image
+    return image, label
 
-def standardise_me(image):
+def standardise_me(image, label):
     std_val = tf.math.reduce_std(image, axis=None)
     print(f"std_val: {std_val}")
     image = tf.cast(image/std_val, tf.float32)
-    return image
+    return image, label
 
+def rescale_2(image, label):
+    max_val = tf.math.reduce_max(tf.math.abs(image), axis=[1,2,3], keepdims=True)
+    image = image/max_val
+    return image, label
 
 
 data_dir_1 = input("directory that contains solely Confirmed and Rejected folders, labelled as 1 and 0 respectively: ")
@@ -47,7 +51,8 @@ train_data_1 = keras.preprocessing.image_dataset_from_directory(
     color_mode="grayscale",
     batch_size=32,
     image_size=(128, 128),
-    shuffle=False,
+    shuffle=True,
+    seed=223,
     interpolation="bilinear",
 )
 files= train_data_1.file_paths
@@ -75,9 +80,10 @@ files= train_data_1.file_paths
 
 # layer = layers.LayerNormalization()
 # train_data = layer(train_data)
-# train_data_1 = train_data_1.map(normalise_me)
-# train_data_1 = train_data_1.map(center_me)
-# train_data_1 = train_data_1.map(standardise_me)
+train_data_1_norm = train_data_1.map(normalise_me)
+train_data_1_cent = train_data_1_norm.map(center_me)
+train_data_1_stan = train_data_1_cent.map(standardise_me)
+train_data_1_resc2 = train_data_1_stan.map(rescale_2)
 
 # print(f"train_data.shape(): {train_data.shape()}")
 
@@ -87,7 +93,7 @@ files= train_data_1.file_paths
 #images_batch and labels_batch are tensorflow.python.framework.ops.EagerTensor, they have a len of batch_size as defined in the keras.preprocessing.image_dataset_from_directory() function. Every time you get to the end of one batch, it gets replaced by the nex batch and so indexing can be a little tricky
 #image_paths is a python list that contains all the full file paths of the images found by the keras.preprocessing.image_dataset_from_directory() and does not have any batches and so to pair up the file names and the actual entries in the tensors, you need to keep track of different indices
 index = 0
-for images_batch, labels_batch in train_data_1:
+for images_batch, labels_batch in train_data_1_resc2:
 
     print(f"tf.shape(images_batch): {tf.shape(images_batch)}")
 
@@ -107,34 +113,34 @@ for images_batch, labels_batch in train_data_1:
         # print(numpy_array)
         # print(f"image_paths[{index}]: {image_paths[index]}")
         index += 1
-        # plt.imshow(image)
-        # plt.show()
-        output_1 = normalise_me(image)
-        plt.imshow(output_1)
+        plt.imshow(image)
         plt.show()
-        output_2 = center_me(output_1)
-        plt.imshow(output_2)
-        plt.show()
-        output_3 = standardise_me(output_2)
-        plt.imshow(output_3)
-        plt.show()
+        #output_1 = normalise_me(image)
+        #plt.imshow(output_1)
+        #plt.show()
+        #output_2 = center_me(output_1)
+        #plt.imshow(output_2)
+        #plt.show()
+        #output_3 = standardise_me(output_2)
+        #plt.imshow(output_3)
+        #plt.show()
 
-        pil_image = load_img(files[0], color_mode = "grayscale", target_size = (128, 128), interpolation = "bilinear")
-        image_np_array = img_to_array(pil_image)
-        image_rescale = image_np_array/255.
-        print("numpy")
-        plt.imshow(image_rescale)
-        plt.show()
-        mean = np.mean(image_rescale)
-        print(f"mean: {mean}")
-        image_center = image_rescale - mean
-        plt.imshow(image_center)
-        plt.show()
-        std = np.std(image_center)
-        print(f"std: {std}")
-        image_stan = image_center / std
-        plt.imshow(image_stan)
-        plt.show()
+        #pil_image = load_img(files[0], color_mode = "grayscale", target_size = (128, 128), interpolation = "bilinear")
+        #image_np_array = img_to_array(pil_image)
+        #image_rescale = image_np_array/255.
+        #print("numpy")
+        #plt.imshow(image_rescale)
+        #plt.show()
+        #mean = np.mean(image_rescale)
+        #print(f"mean: {mean}")
+        #image_center = image_rescale - mean
+        #plt.imshow(image_center)
+        #plt.show()
+        #std = np.std(image_center)
+        #print(f"std: {std}")
+        #image_stan = image_center / std
+        #plt.imshow(image_stan)
+        #plt.show()
         # #this bit is only needed to plot the image for visual demonstrations
         # #-------------------------------------------------------------------
         # #create plot of meteor_image and crop_image

@@ -4,9 +4,9 @@ import matplotlib.image as mpimg
 
 
 pred_csv = input("csv file containing predictions: ")
-#print("test0")
-with open(pred_csv) as csv_file:
-    #print("test1")
+
+
+with open(pred_csv, mode="r") as csv_file:
     csv_reader = csv.reader(csv_file)
     row_index = 0
     for row in csv_reader:

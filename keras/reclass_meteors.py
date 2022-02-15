@@ -61,30 +61,93 @@ def search_dirs(search_term, top_search_dir):
 class meteor_image:
 
 
-     def __init__(self, file_path):
+     def __init__(self, label, prediction, True_prediction, file_path):
         self.name = os.path.basename(file_path)
         self.pngdir = png_dir
         self.png_path = file_path
         #search_dirs(search_term, chosen_dir, file_or_folder="", exact_match=False, search_subdirs=False)
         #file_name[3:18] is the directory that it came from
-        print("test1", self.name[3:37])
-        print("test2", search_dirs(self.name[3:37], Confirmed_FITS_dir))
+        #print("test1", self.name[3:37])
+        #print("test2", search_dirs(self.name[3:37], Confirmed_FITS_dir))
         self.con_fits_dir = search_dirs(self.name[3:37], Confirmed_FITS_dir)[0]
         self.rej_fits_dir = search_dirs(self.name[3:37], Rejected_FITS_dir)[0]
         #might need to get basename for self.con_fits_dir in search term
-        print("test3", self.con_fits_dir)
+        #print("test3", self.con_fits_dir)
+        if len(self.con_fits_dir) < 3 and len(self.rej_fits_dir) < 3:
+            print("MAjor Error")
+        if len(self.con_fits_dir) < 3:
+            self.con_fits_dir = os.path.join(Confirmed_FITS_dir, os.path.basename(self.rej_fits_dir))
+        if len(self.rej_fits_dir) < 3:
+            self.rej_fits_dir = os.path.join(Rejected_FITS_dir, os.path.basename(self.con_fits_dir))
+
         con_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.con_fits_dir) + ".txt" , self.con_fits_dir)
         rej_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.rej_fits_dir) + ".txt" , self.rej_fits_dir)
         self.con_FTP = os.path.join(con_FTP_file[0], con_FTP_file[1])
         self.rej_FTP = os.path.join(rej_FTP_file[0], rej_FTP_file[1])
+    
+        print("test1", os.path.join(self.con_fits_dir, self.name[:37] + ".fits"))
+        if os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True and  os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True:
+            self.con_or_rej = "both"
+            self.fits_file = os.path.join(self.con_fits_dir, self.name[:37] + ".fits")
+        elif os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True: 
+            self.con_or_rej = "con"
+            self.fits_file = os.path.join(self.con_fits_dir, self.name[:37] + ".fits")
+        elif os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True: 
+            self.con_or_rej = "rej"
+            self.fits_file = os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")
+        else:
+            self.con_or_rej = None
+
+def del_FTP_entries(meteor_image_2):
+    """
+    deletes entries in FTP files that shouldn;t be there. i.e. confirmed meteor detections should not be in the FTP file that is in the rejected folder and vice versa
+    input is a meteor_image class object as that will contain a lot of the necessary info
+    """
+    #returns None to deliberately cause problems later on, TODO manage return None
+    if meteor_image_2.con_or_rej == "both" or meteor_image_2.con_or_rej == None:
+        return None
+    #deleting entry from wrong FTP file so need opposite FTP file from classification
+    elif meteor_image_2.con_or_rej == "con":
+        chosen_FTP_file = meteor_image_2.rej_FTP
+    elif meteor_image_2.con_or_rej == "rej":
+        chosen_FTP_file = meteor_image_2.con_FTP
+
+    with open(chosen_FTP_file, "r+") as detect_file:
+
+        detect_file_lines_list = detect_file.readlines()
+        write_file_lines_list = detect_file_lines_list[:]
+        detect_file.seek(0) #resets pointer to start of file
+        #put this following line just before the write statement so that if things go wrong it doesn't wipe the file
+        #detect_file.truncate() #deletes all lines after this point as they will all be wrt
+        #or create temporary file with modified data, and then rename temp file to original file name and replace original file
+        #dupes are only created in directories that have the same FTP files
+        #this code only executes if the fits appears in only one directory and so all mentions of the .fits file in the FTP in the wrong directory should be deleted
+        #if the .fits file appears in both directories this code won't execute and the FTP file will be left alone
+        #should also delete multiple instances of the same .fits being mentioned
+        for line_number, line in enumerate(detect_file_lines_list):
+            if line.find(os.path.basename(meteor_image_2.fits_file) != -1:
+                #gets the num frames the meteor is in and thus the number of lines in the entry
+                #need to delete the dashed line above the file name, line with the file name, line with calibration inoformation, line with cam details, and lines with detection details
+                detection_start_line = line_number - 1
+                #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
+                num_lines_to_del = int(detect_file_lines_list[line_number + 2]) + 4
+                #use del list[start:end] to remove elements including start, up to end
+                del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
+
+        #TODO write write_file_lines_list to file, test deleting function
+
+
+
 
 def con_butt(event):
     print("test conf butt")
 def rej_butt(event):
     print("test rej butt")
 
-
-
+#only applies for dupe images as these dupe images have the same FTP file on both Confirmed and Rejected folders and only have the FITS file in the correct directory
+#some dupes have both the same FTP file and same FITS files in both directories as there were at least one Confirmed and one Rejected in the same FITS file
+#TODO: Add functions to remove entries from FTP files if FITS file not in directory
+#TODO: Add unsure button, add functionality to buttons
 
 def plot_meteor_img(meteor_img):
     fig, ax1  = plt.subplots()
@@ -110,7 +173,6 @@ def plot_meteor_img(meteor_img):
 
 
 
-#TODO: change to read proper file and have proper indices
 with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
     csv_reader = csv.reader(csv_file)
     #row_index = 0
@@ -118,13 +180,16 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
         if row_index == 0:
             continue
         #row[0] is the label, row[1] is the prediction, row[2] is True Prediction, row[3] is the file path of one of the dupes
-        image_1 = meteor_image(row)
+        image_1 = meteor_image(row[0], row[1], row[2], row[3])
         print(f"image_1.name: {image_1.name}\n\
                 image_1.png_dir: {image_1.pngdir}\n\
+                image_1.png_path: {image_1.png_path}\n\
                 image_1.con_fits_dir: {image_1.con_fits_dir}\n\
                 image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
                 image_1.con_FTP: {image_1.con_FTP}\n\
-                image_1.rej_FTP: {image_1.rej_FTP}")
+                image_1.rej_FTP: {image_1.rej_FTP}\n\
+                image_1.con_or_rej: {image_1.con_or_rej}\n\
+                image_1.fits_file: {image_1.fits_file}")
 
         plot_meteor_img(image_1)
 

@@ -84,15 +84,15 @@ class meteor_image:
         rej_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.rej_fits_dir) + ".txt" , self.rej_fits_dir)
         self.con_FTP = os.path.join(con_FTP_file[0], con_FTP_file[1])
         self.rej_FTP = os.path.join(rej_FTP_file[0], rej_FTP_file[1])
-    
+
         print("test1", os.path.join(self.con_fits_dir, self.name[:37] + ".fits"))
         if os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True and  os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True:
             self.con_or_rej = "both"
             self.fits_file = os.path.join(self.con_fits_dir, self.name[:37] + ".fits")
-        elif os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True: 
+        elif os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True:
             self.con_or_rej = "con"
             self.fits_file = os.path.join(self.con_fits_dir, self.name[:37] + ".fits")
-        elif os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True: 
+        elif os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True:
             self.con_or_rej = "rej"
             self.fits_file = os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")
         else:
@@ -112,11 +112,12 @@ def del_FTP_entries(meteor_image_2):
     elif meteor_image_2.con_or_rej == "rej":
         chosen_FTP_file = meteor_image_2.con_FTP
 
-    with open(chosen_FTP_file, "r+") as detect_file:
+    temp_FTP_file = chosen_FTP_file + ".tmp"
+    with open(chosen_FTP_file, "r") as detect_file:
 
         detect_file_lines_list = detect_file.readlines()
         write_file_lines_list = detect_file_lines_list[:]
-        detect_file.seek(0) #resets pointer to start of file
+        # detect_file.seek(0) #resets pointer to start of file
         #put this following line just before the write statement so that if things go wrong it doesn't wipe the file
         #detect_file.truncate() #deletes all lines after this point as they will all be wrt
         #or create temporary file with modified data, and then rename temp file to original file name and replace original file
@@ -134,7 +135,11 @@ def del_FTP_entries(meteor_image_2):
                 #use del list[start:end] to remove elements including start, up to end
                 del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
 
-        #TODO write write_file_lines_list to file, test deleting function
+        with open(tmep_FTP_file, "w") as temp_file:
+            temp_file.writelines(write_file_lines_list)
+
+    # os.replace(temp_FTP_file, chosen_FTP_file)
+        #TODO test deleting function
 
 
 
@@ -170,8 +175,11 @@ def plot_meteor_img(meteor_img):
 
 
 
-
-
+#if the fits file exists in both directories and detection needs to be manually checked, it is added to to both_img_list else it is put in the one_img_list and will be automatically dealt with
+both_img_list = []
+one_img_list = []
+#if for some reason an image doesn't fall into either of the catgories it will be appended to the problem_list
+problem_list = []
 
 with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
     csv_reader = csv.reader(csv_file)
@@ -181,6 +189,12 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
             continue
         #row[0] is the label, row[1] is the prediction, row[2] is True Prediction, row[3] is the file path of one of the dupes
         image_1 = meteor_image(row[0], row[1], row[2], row[3])
+        if image_1.con_or_rej == "both":
+            both_img_list.append(image_1)
+        elif image_1.con_or_rej == "con" or image_1.con_or_rej == "rej":
+            one_img_list.append(image_1)
+        else:
+            problem_list.append(image_1)
         print(f"image_1.name: {image_1.name}\n\
                 image_1.png_dir: {image_1.pngdir}\n\
                 image_1.png_path: {image_1.png_path}\n\
@@ -192,5 +206,3 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
                 image_1.fits_file: {image_1.fits_file}")
 
         plot_meteor_img(image_1)
-
-

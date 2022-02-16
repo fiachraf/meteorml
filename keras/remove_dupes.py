@@ -85,7 +85,7 @@ class meteor_image:
         self.con_FTP = os.path.join(con_FTP_file[0], con_FTP_file[1])
         self.rej_FTP = os.path.join(rej_FTP_file[0], rej_FTP_file[1])
 
-        print("test1", os.path.join(self.con_fits_dir, self.name[:37] + ".fits"))
+        #print("test1", os.path.join(self.con_fits_dir, self.name[:37] + ".fits"))
         if os.path.isfile(os.path.join(self.con_fits_dir, self.name[:37] + ".fits")) == True and  os.path.isfile(os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")) == True:
             self.con_or_rej = "both"
             self.fits_file = os.path.join(self.con_fits_dir, self.name[:37] + ".fits")
@@ -97,6 +97,7 @@ class meteor_image:
             self.fits_file = os.path.join(self.rej_fits_dir, self.name[:37] + ".fits")
         else:
             self.con_or_rej = None
+        self.meteor_num = int(self.name[-5])
 
 def del_FTP_entries(meteor_image_2):
     """
@@ -126,28 +127,30 @@ def del_FTP_entries(meteor_image_2):
         #if the .fits file appears in both directories this code won't execute and the FTP file will be left alone
         #should also delete multiple instances of the same .fits being mentioned
         for line_number, line in enumerate(detect_file_lines_list):
-            if line.find(os.path.basename(meteor_image_2.fits_file) != -1:
+            if line.find(os.path.basename(meteor_image_2.fits_file)) != -1:
                 #gets the num frames the meteor is in and thus the number of lines in the entry
                 #need to delete the dashed line above the file name, line with the file name, line with calibration inoformation, line with cam details, and lines with detection details
                 detection_start_line = line_number - 1
+                
+                #make sure it is the correct detection
+                detection_no = int(detect_file_lines_list[line_number + 2][7:11]
+                if detection_no != meteor_image_2.meteor_num:
+                    continue
+
+
                 #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
-                num_lines_to_del = int(detect_file_lines_list[line_number + 2]) + 4
+                num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
                 #use del list[start:end] to remove elements including start, up to end
                 del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
-
-        with open(tmep_FTP_file, "w") as temp_file:
+        #print(f"temp_FTP_file: {temp_FTP_file}")
+        with open(temp_FTP_file, "w") as temp_file:
             temp_file.writelines(write_file_lines_list)
-
-    # os.replace(temp_FTP_file, chosen_FTP_file)
+    os.replace(temp_FTP_file, chosen_FTP_file)
         #TODO test deleting function
 
 
 
 
-def con_butt(event):
-    print("test conf butt")
-def rej_butt(event):
-    print("test rej butt")
 
 #only applies for dupe images as these dupe images have the same FTP file on both Confirmed and Rejected folders and only have the FITS file in the correct directory
 #some dupes have both the same FTP file and same FITS files in both directories as there were at least one Confirmed and one Rejected in the same FITS file
@@ -158,7 +161,7 @@ def plot_meteor_img(meteor_img):
     fig, ax1  = plt.subplots()
     fig.set_size_inches(6,6)
     img = mpimg.imread(meteor_img.png_path)
-    print("test4", meteor_img.name)
+    #print("test4", meteor_img.name)
     meteor_img_name = meteor_img.name
     ax1.imshow(img)
     ax1.set_title(meteor_img.name)
@@ -195,14 +198,67 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
             one_img_list.append(image_1)
         else:
             problem_list.append(image_1)
-        print(f"image_1.name: {image_1.name}\n\
-                image_1.png_dir: {image_1.pngdir}\n\
-                image_1.png_path: {image_1.png_path}\n\
-                image_1.con_fits_dir: {image_1.con_fits_dir}\n\
-                image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
-                image_1.con_FTP: {image_1.con_FTP}\n\
-                image_1.rej_FTP: {image_1.rej_FTP}\n\
-                image_1.con_or_rej: {image_1.con_or_rej}\n\
-                image_1.fits_file: {image_1.fits_file}")
+        
+        #del_FTP_entries(image_1)
 
-        plot_meteor_img(image_1)
+        #plot_meteor_img(image_1)
+
+
+for image_2 in one_img_list:
+#    print(f"image_1.name: {image_1.name}\n\
+#            image_1.png_dir: {image_1.pngdir}\n\
+#            image_1.png_path: {image_1.png_path}\n\
+#            image_1.con_fits_dir: {image_1.con_fits_dir}\n\
+#            image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
+#            image_1.con_FTP: {image_1.con_FTP}\n\
+#            image_1.rej_FTP: {image_1.rej_FTP}\n\
+#            image_1.con_or_rej: {image_1.con_or_rej}\n\
+#            image_1.fits_file: {image_1.fits_file}")
+    try:
+        del_FTP_entries(image_2)
+    except Exception as error_1:
+        print(f"Error: {error_1}")
+        
+        print(f"image_2.name: {image_2.name}\n\
+                image_2.png_dir: {image_2.pngdir}\n\
+                image_2.png_path: {image_2.png_path}\n\
+                image_2.con_fits_dir: {image_2.con_fits_dir}\n\
+                image_2.rej_fits_dir: {image_2.rej_fits_dir}\n\
+                image_2.con_FTP: {image_2.con_FTP}\n\
+                image_2.rej_FTP: {image_2.rej_FTP}\n\
+                image_2.con_or_rej: {image_2.con_or_rej}\n\
+                image_2.fits_file: {image_2.fits_file}\n\
+                image_2.meteor_num: {image_2.meteor_num}")
+    
+print(f"len(both_img_list): {len(both_img_list)}")
+print(f"len(problem_list): {len(problem_list)}")
+with open(os.path.join(initial_dir, "need_reclassifying.csv"), "w") as reclass_csv:
+    reclass_csv_writer = csv.writer(reclass_csv, delimiter=",")
+    reclass_csv_writer.writerow(["name", "pngdir", "png_path", "con_fits_dir", "rej_fits_dir", "con_FTP", "rej_FTP", "con_or_rej", "fits_file", "meteor_num"])
+    for image_3 in both_img_list:
+        reclass_csv_writer.writerow([image_3.name, image_3.pngdir, image_3.png_path, image_3.con_fits_dir, image_3.rej_fits_dir, image_3.con_FTP, image_3.rej_FTP, image_3.con_or_rej, image_3.fits_file, image_3.meteor_num])
+        #print(f"image_1.name: {image_1.name}\n\
+        #        image_1.png_dir: {image_1.pngdir}\n\
+        #        image_1.png_path: {image_1.png_path}\n\
+        #        image_1.con_fits_dir: {image_1.con_fits_dir}\n\
+        #        image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
+        #        image_1.con_FTP: {image_1.con_FTP}\n\
+        #        image_1.rej_FTP: {image_1.rej_FTP}\n\
+        #        image_1.con_or_rej: {image_1.con_or_rej}\n\
+        #        image_1.fits_file: {image_1.fits_file}")
+
+if len(problem_list) > 0:
+    with open(os.path.join(intial_dir, "problem_files.csv"), "w") as prob_csv:
+        prob_csv_writer = csv.writer(prob_csv, delimiter=",")
+        prob_csv_writer.writerow(["FITS file", "confirmed FTP File", "rejected FTP file"])
+        for image_4 in problem_list:
+            reclass_csv_writer.writerow([image_3.fits_file, image_3.con_FTP, image_3.rej_FTP])
+    #print(f"image_1.name: {image_1.name}\n\
+    #        image_1.png_dir: {image_1.pngdir}\n\
+    #        image_1.png_path: {image_1.png_path}\n\
+    #        image_1.con_fits_dir: {image_1.con_fits_dir}\n\
+    #        image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
+    #        image_1.con_FTP: {image_1.con_FTP}\n\
+    #        image_1.rej_FTP: {image_1.rej_FTP}\n\
+    #        image_1.con_or_rej: {image_1.con_or_rej}\n\
+    #        image_1.fits_file: {image_1.fits_file}")

@@ -1,5 +1,5 @@
 Label,Prediction,True Prediction,File Name
-0,0.95,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210112_203544_958_0355584_1.png
+0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210121_063627_096_1235200_3.png
 0,0.92,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210112_230222_930_0574720_1.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210112_231532_002_0594432_1.png
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210112_234625_673_0640512_1.png
@@ -21,7 +21,7 @@ Label,Prediction,True Prediction,File Name
 0,0.8,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210120_221515_694_0487168_1.png
 0,0.7,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210120_233457_319_0606208_1.png
 0,0.98,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210121_052231_503_1126144_1.png
-0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210121_063627_096_1235200_3.png
+0,0.95,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0002_20210112_203544_958_0355584_1.png
 0,0.75,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0003_20210120_232159_958_0592640_1.png
 0,0.92,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0003_20210120_232717_925_0600576_1.png
 0,0.92,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_BE0003_20210120_234911_555_0633344_1.png
@@ -1446,14 +1446,14 @@ Label,Prediction,True Prediction,File Name
 0,0.79,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_221850_154_0210688_1.png
 0,0.84,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_222032_560_0213248_1.png
 0,0.86,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_222752_883_0224256_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_223343_438_0232960_1.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_223343_438_0232960_1.png
 0,0.9,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_223637_529_0237312_1.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_224246_163_0246528_1.png
 0,0.77,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_224844_605_0255488_1.png
 0,0.81,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_225351_812_0263168_1.png
 0,0.37,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_225554_693_0266240_1.png
 0,0.01,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_225554_693_0266240_2.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_225554_693_0266240_3.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_225554_693_0266240_3.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_230548_727_0281088_1.png
 0,0.85,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_232131_899_0304640_1.png
 0,0.79,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210808_232446_454_0309504_1.png
@@ -1714,9 +1714,9 @@ Label,Prediction,True Prediction,File Name
 0,0.84,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_231857_829_0313600_1.png
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_231918_316_0314112_1.png
 0,0.81,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_2.png
 0,0.01,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_3.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_4.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232040_267_0316160_4.png
 0,0.79,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232100_747_0316672_1.png
 0,0.68,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232131_468_0317440_1.png
 0,0.86,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210812_232232_925_0318976_1.png
@@ -2199,9 +2199,9 @@ Label,Prediction,True Prediction,File Name
 0,0.83,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005235_774_0457216_1.png
 0,0.85,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005438_643_0460288_1.png
 0,0.42,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_2.png
 0,0.01,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_3.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_4.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005823_931_0465920_4.png
 0,0.92,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_005904_893_0466944_1.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_010422_335_0474880_1.png
 0,0.69,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210814_010503_288_0475904_1.png
@@ -2345,7 +2345,7 @@ Label,Prediction,True Prediction,File Name
 0,0.7,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_210047_554_0116224_1.png
 0,0.81,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_210645_952_0125184_1.png
 0,0.01,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_210919_556_0129024_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_210919_556_0129024_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_210919_556_0129024_2.png
 0,0.85,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_211101_958_0131584_1.png
 0,0.84,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_211640_390_0140032_1.png
 0,0.8,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210815_212056_399_0146432_1.png
@@ -2657,8 +2657,8 @@ Label,Prediction,True Prediction,File Name
 0,0.89,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_013049_738_0592896_1.png
 0,0.91,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_013942_216_0606208_1.png
 0,0.18,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_014621_589_0616192_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_014621_589_0616192_2.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_014621_589_0616192_3.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_014621_589_0616192_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_014621_589_0616192_3.png
 0,0.85,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_015047_818_0622848_1.png
 0,0.79,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_015321_430_0626688_1.png
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0001_20210906_015544_789_0630272_1.png
@@ -3733,10 +3733,10 @@ Label,Prediction,True Prediction,File Name
 0,0.92,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_031534_558_0756480_1.png
 0,0.93,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_032132_956_0765440_1.png
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_032356_324_0769024_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_033938_396_0792576_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_034333_919_0798464_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_034333_919_0798464_2.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_035632_169_0817920_1.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_033938_396_0792576_1.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_034333_919_0798464_1.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_034333_919_0798464_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_035632_169_0817920_1.png
 0,0.05,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_040129_122_0825344_1.png
 0,0.71,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_040849_440_0836352_1.png
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210402_225847_080_0368640_1.png
@@ -4831,7 +4831,7 @@ Label,Prediction,True Prediction,File Name
 0,0.88,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025541_414_0638464_1.png
 0,0.67,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025622_378_0639488_1.png
 0,0.02,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025622_378_0639488_2.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025622_378_0639488_3.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025622_378_0639488_3.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025744_299_0641536_1.png
 0,0.81,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025926_693_0644096_1.png
 0,0.81,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210813_025926_693_0644096_2.png
@@ -5320,7 +5320,7 @@ Label,Prediction,True Prediction,File Name
 0,0.85,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_203338_995_0147712_1.png
 0,0.87,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_204505_759_0164864_1.png
 0,0.18,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_205108_281_0173824_1.png
-0,0.0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_205108_281_0173824_2.png
+0,0,True,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_205108_281_0173824_2.png
 0,0.84,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_205453_560_0179456_1.png
 0,0.77,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_212455_995_0224512_1.png
 0,0.82,False,/mnt/local/fiachra/meteor_images/files/20220121_pngs/0/FF_NL0009_20210905_213226_554_0235776_1.png

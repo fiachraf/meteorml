@@ -61,17 +61,17 @@ def search_dirs(search_term, top_search_dir):
 class meteor_image:
 
 
-    def __init__(self, file_name, file_pngdir, file_png_path, file_con_fits_dir, file_rej_fits_dir, file_con_FTP, file_rej_FTP, file_con_or_rej, file_fits_file):
+    def __init__(self, file_name, file_pngdir, file_png_path, file_con_fits_dir, file_rej_fits_dir, file_con_FTP, file_rej_FTP, file_con_or_rej, file_fits_file, file_meteor_num):
         self.name = file_name
         self.pngdir = file_pngdir
         self.png_path = file_png_path
-        self.con_fits_dir = file_con_fits_dir 
+        self.con_fits_dir = file_con_fits_dir
         self.rej_fits_dir = file_rej_fits_dir
-        self.con_FTP = file_con_FTP 
+        self.con_FTP = file_con_FTP
         self.rej_FTP = file_rej_FTP
-        self.fits_file = file_fits_file 
+        self.fits_file = file_fits_file
         self.con_or_rej = file_con_or_rej
-        
+        self.meteor_num = int(file_meteor_num)
     #add functions that can be called to call other functions to delete entry
     def confirm(self, event):
         self.con_or_rej = "con"
@@ -119,6 +119,13 @@ def del_FTP_entries(meteor_image_2):
                 #gets the num frames the meteor is in and thus the number of lines in the entry
                 #need to delete the dashed line above the file name, line with the file name, line with calibration inoformation, line with cam details, and lines with detection details
                 detection_start_line = line_number - 1
+
+                #make sure it is the correct detection
+                detection_no = int(detect_file_lines_list[line_number + 2][7:11]
+                if detection_no != meteor_image_2.meteor_num:
+                    continue
+
+
                 #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
                 num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
                 #use del list[start:end] to remove elements including start, up to end
@@ -180,5 +187,6 @@ for image_2 in meteor_list:
             image_2.con_FTP: {image_2.con_FTP}\n\
             image_2.rej_FTP: {image_2.rej_FTP}\n\
             image_2.con_or_rej: {image_2.con_or_rej}\n\
-            image_2.fits_file: {image_2.fits_file}")
+            image_2.fits_file: {image_2.fits_file}\n\
+            image_2.meteor_num: {image_2.meteor_num}")
     plot_meteor_img(image_2)

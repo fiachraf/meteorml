@@ -131,7 +131,7 @@ def del_FTP_entries(meteor_image_2):
                 #gets the num frames the meteor is in and thus the number of lines in the entry
                 #need to delete the dashed line above the file name, line with the file name, line with calibration inoformation, line with cam details, and lines with detection details
                 detection_start_line = line_number - 1
-                
+
                 #make sure it is the correct detection
                 detection_no = int(detect_file_lines_list[line_number + 2][7:11]
                 if detection_no != meteor_image_2.meteor_num:
@@ -145,7 +145,7 @@ def del_FTP_entries(meteor_image_2):
         #print(f"temp_FTP_file: {temp_FTP_file}")
         with open(temp_FTP_file, "w") as temp_file:
             temp_file.writelines(write_file_lines_list)
-    os.replace(temp_FTP_file, chosen_FTP_file)
+    #os.replace(temp_FTP_file, chosen_FTP_file)
         #TODO test deleting function
 
 
@@ -198,7 +198,7 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
             one_img_list.append(image_1)
         else:
             problem_list.append(image_1)
-        
+
         #del_FTP_entries(image_1)
 
         #plot_meteor_img(image_1)
@@ -216,9 +216,11 @@ for image_2 in one_img_list:
 #            image_1.fits_file: {image_1.fits_file}")
     try:
         del_FTP_entries(image_2)
+
+        pause_input = input("waiting for input, check if .tmp is done correctly then remove commented line 148 and restart script so that it will then replace the FTP files, if files not done correctly just press Ctrl + C")
     except Exception as error_1:
         print(f"Error: {error_1}")
-        
+
         print(f"image_2.name: {image_2.name}\n\
                 image_2.png_dir: {image_2.pngdir}\n\
                 image_2.png_path: {image_2.png_path}\n\
@@ -229,7 +231,7 @@ for image_2 in one_img_list:
                 image_2.con_or_rej: {image_2.con_or_rej}\n\
                 image_2.fits_file: {image_2.fits_file}\n\
                 image_2.meteor_num: {image_2.meteor_num}")
-    
+
 print(f"len(both_img_list): {len(both_img_list)}")
 print(f"len(problem_list): {len(problem_list)}")
 with open(os.path.join(initial_dir, "need_reclassifying.csv"), "w") as reclass_csv:

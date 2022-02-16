@@ -8,10 +8,8 @@ meteorml_20220121.h5
 trained on 20220121_pngs
 
 meteorml_20220122_1.h5
-meteorml_20220122_2.h5
+meteorml_20220122_2.h5 had only one convolution layer and one max pool layer
 both trained on 20220121_pngs
-one had 5x5 size convolutions
-other one had only one convolution and one MaxPooling2D layer
 
 20220204_1.h5
 trained on 20220201_1_pngs

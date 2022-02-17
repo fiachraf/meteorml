@@ -45,7 +45,7 @@ initial_dir = os.getcwd()
 os.chdir(png_dir)
 cwd1 = os.getcwd()
 
-def search_dirs(search_term, top_search_dir):
+def search_dirs(search_term, top_search_dir, exact_search=False):
     #file_list = os.walk(top_search_dir)
     #for fits_file in file_list:
     #    if fits_file.find(search_term) != -1:
@@ -53,8 +53,12 @@ def search_dirs(search_term, top_search_dir):
 
     for root, dirs, files in os.walk(top_search_dir):
         for file_name in files:
-            if file_name.find(search_term) != -1:
-                return (root, file_name)
+            if exact_search == False:
+                if file_name.find(search_term) != -1:
+                    return (root, file_name)
+            else:
+                if file_name == search_term:
+                    return (root, file_name)
     return ("","")
 
 
@@ -102,6 +106,10 @@ def del_FTP_entries(meteor_image_2):
         chosen_FTP_file = meteor_image_2.con_FTP
 
     temp_FTP_file = chosen_FTP_file + ".tmp"
+    #make a copy of original file on first time opening file
+    if os.path.isfile(chosen_FTP_file[:-4] + "_ogcopy" + ".txt") == False:
+        shutil.copyfile(chosen_FTP_file, chosen_FTP_file[:-4] + "_ogcopy" + ".txt")
+
     with open(chosen_FTP_file, "r") as detect_file:
 
         detect_file_lines_list = detect_file.readlines()
@@ -121,16 +129,16 @@ def del_FTP_entries(meteor_image_2):
                 detection_start_line = line_number - 1
 
                 #make sure it is the correct detection
-                detection_no = int(detect_file_lines_list[line_number + 2][7:11]
+                detection_no = int(detect_file_lines_list[line_number + 2][7:11])
                 if detection_no != meteor_image_2.meteor_num:
                     continue
 
-
-                #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
-                num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
-                #use del list[start:end] to remove elements including start, up to end
-                del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
-        #print(f"temp_FTP_file: {temp_FTP_file}")
+                else:
+                    #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
+                    num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
+                    #use del list[start:end] to remove elements including start, up to end
+                    del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
+        print(f"temp_FTP_file: {temp_FTP_file}")
         with open(temp_FTP_file, "w") as temp_file:
             temp_file.writelines(write_file_lines_list)
     os.replace(temp_FTP_file, chosen_FTP_file)

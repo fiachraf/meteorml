@@ -23,3 +23,15 @@ trained on 20220121_pngs
 meteorml_20220206.h5
 trained on 20220121_pngs
 trained over whole dataset each epoch
+
+
+dataset details partial
+20220104 small dataset
+20220115 larger augmneted dataset
+20220121 larger un augmented dataset
+20220201_1 maxframe timesliced
+20220201_2 maxframe not timesliced
+20220207_pngs no border, made square
+20220208_pngs no border, not made square
+20220211_pngs
+

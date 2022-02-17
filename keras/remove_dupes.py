@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.widgets import Button
 from pathlib import Path
-
+import shutil
 
 path_root = Path(__file__).parents[1]
 #print(f"path_root: {path_root}/RMS")
@@ -45,7 +45,7 @@ initial_dir = os.getcwd()
 os.chdir(png_dir)
 cwd1 = os.getcwd()
 
-def search_dirs(search_term, top_search_dir):
+def search_dirs(search_term, top_search_dir, exact_search=False):
     #file_list = os.walk(top_search_dir)
     #for fits_file in file_list:
     #    if fits_file.find(search_term) != -1:
@@ -53,8 +53,12 @@ def search_dirs(search_term, top_search_dir):
 
     for root, dirs, files in os.walk(top_search_dir):
         for file_name in files:
-            if file_name.find(search_term) != -1:
-                return (root, file_name)
+            if exact_search == False:
+                if file_name.find(search_term) != -1:
+                    return (root, file_name)
+            else:
+                if file_name == search_term:
+                    return (root, file_name)
     return ("","")
 
 
@@ -80,8 +84,8 @@ class meteor_image:
         if len(self.rej_fits_dir) < 3:
             self.rej_fits_dir = os.path.join(Rejected_FITS_dir, os.path.basename(self.con_fits_dir))
 
-        con_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.con_fits_dir) + ".txt" , self.con_fits_dir)
-        rej_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.rej_fits_dir) + ".txt" , self.rej_fits_dir)
+        con_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.con_fits_dir) + ".txt" , self.con_fits_dir, exact_search=True)
+        rej_FTP_file = search_dirs("FTPdetectinfo_" + os.path.basename(self.rej_fits_dir) + ".txt" , self.rej_fits_dir, exact_search=True)
         self.con_FTP = os.path.join(con_FTP_file[0], con_FTP_file[1])
         self.rej_FTP = os.path.join(rej_FTP_file[0], rej_FTP_file[1])
 
@@ -114,6 +118,10 @@ def del_FTP_entries(meteor_image_2):
         chosen_FTP_file = meteor_image_2.con_FTP
 
     temp_FTP_file = chosen_FTP_file + ".tmp"
+    #make a copy of original file on first time opening file
+    if os.path.isfile(chosen_FTP_file[:-4] + "_ogcopy" + ".txt") == False:
+        shutil.copyfile(chosen_FTP_file, chosen_FTP_file[:-4] + "_ogcopy" + ".txt") 
+
     with open(chosen_FTP_file, "r") as detect_file:
 
         detect_file_lines_list = detect_file.readlines()
@@ -133,19 +141,19 @@ def del_FTP_entries(meteor_image_2):
                 detection_start_line = line_number - 1
 
                 #make sure it is the correct detection
-                detection_no = int(detect_file_lines_list[line_number + 2][7:11]
+                detection_no = int(detect_file_lines_list[line_number + 2][7:11])
                 if detection_no != meteor_image_2.meteor_num:
                     continue
 
-
-                #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
-                num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
-                #use del list[start:end] to remove elements including start, up to end
-                del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
-        #print(f"temp_FTP_file: {temp_FTP_file}")
+                else:
+                    #detect_file_lines_list[line_number+2][12:16] gets the number of frame lines
+                    num_lines_to_del = int(detect_file_lines_list[line_number + 2][12:16]) + 4
+                    #use del list[start:end] to remove elements including start, up to end
+                    del write_file_lines_list[detection_start_line : detection_start_line + num_lines_to_del]
+        print(f"temp_FTP_file: {temp_FTP_file}")
         with open(temp_FTP_file, "w") as temp_file:
             temp_file.writelines(write_file_lines_list)
-    #os.replace(temp_FTP_file, chosen_FTP_file)
+    os.replace(temp_FTP_file, chosen_FTP_file)
         #TODO test deleting function
 
 
@@ -188,6 +196,7 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
     csv_reader = csv.reader(csv_file)
     #row_index = 0
     for row_index, row in enumerate(csv_reader):
+        #print(f"row: {row}")
         if row_index == 0:
             continue
         #row[0] is the label, row[1] is the prediction, row[2] is True Prediction, row[3] is the file path of one of the dupes
@@ -205,32 +214,35 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
 
 
 for image_2 in one_img_list:
-#    print(f"image_1.name: {image_1.name}\n\
-#            image_1.png_dir: {image_1.pngdir}\n\
-#            image_1.png_path: {image_1.png_path}\n\
-#            image_1.con_fits_dir: {image_1.con_fits_dir}\n\
-#            image_1.rej_fits_dir: {image_1.rej_fits_dir}\n\
-#            image_1.con_FTP: {image_1.con_FTP}\n\
-#            image_1.rej_FTP: {image_1.rej_FTP}\n\
-#            image_1.con_or_rej: {image_1.con_or_rej}\n\
-#            image_1.fits_file: {image_1.fits_file}")
-    try:
-        del_FTP_entries(image_2)
-
-        pause_input = input("waiting for input, check if .tmp is done correctly then remove commented line 148 and restart script so that it will then replace the FTP files, if files not done correctly just press Ctrl + C")
-    except Exception as error_1:
-        print(f"Error: {error_1}")
-
-        print(f"image_2.name: {image_2.name}\n\
-                image_2.png_dir: {image_2.pngdir}\n\
-                image_2.png_path: {image_2.png_path}\n\
-                image_2.con_fits_dir: {image_2.con_fits_dir}\n\
-                image_2.rej_fits_dir: {image_2.rej_fits_dir}\n\
-                image_2.con_FTP: {image_2.con_FTP}\n\
-                image_2.rej_FTP: {image_2.rej_FTP}\n\
-                image_2.con_or_rej: {image_2.con_or_rej}\n\
-                image_2.fits_file: {image_2.fits_file}\n\
-                image_2.meteor_num: {image_2.meteor_num}")
+    print(f"image_2.name: {image_2.name}\n\
+            image_2.png_dir: {image_2.pngdir}\n\
+            image_2.png_path: {image_2.png_path}\n\
+            image_2.con_fits_dir: {image_2.con_fits_dir}\n\
+            image_2.rej_fits_dir: {image_2.rej_fits_dir}\n\
+            image_2.con_FTP: {image_2.con_FTP}\n\
+            image_2.rej_FTP: {image_2.rej_FTP}\n\
+            image_2.con_or_rej: {image_2.con_or_rej}\n\
+            image_2.fits_file: {image_2.fits_file}\n\
+            image_2.meteor_num: {image_2.meteor_num}")
+    del_FTP_entries(image_2)
+#    if image_2.meteor_num > 1:
+#        try:
+#            del_FTP_entries(image_2)
+#
+#            pause_input = input("waiting for input, check if .tmp is done correctly then remove commented line 148 and restart script so that it will then replace the FTP files, if files not done correctly just press Ctrl + C")
+#        except Exception as error_1:
+#            print(f"Error: {error_1}")
+#
+#            print(f"image_2.name: {image_2.name}\n\
+#                image_2.png_dir: {image_2.pngdir}\n\
+#                image_2.png_path: {image_2.png_path}\n\
+#                image_2.con_fits_dir: {image_2.con_fits_dir}\n\
+#                image_2.rej_fits_dir: {image_2.rej_fits_dir}\n\
+#                image_2.con_FTP: {image_2.con_FTP}\n\
+#                image_2.rej_FTP: {image_2.rej_FTP}\n\
+#                image_2.con_or_rej: {image_2.con_or_rej}\n\
+#                image_2.fits_file: {image_2.fits_file}\n\
+#                image_2.meteor_num: {image_2.meteor_num}")
 
 print(f"len(both_img_list): {len(both_img_list)}")
 print(f"len(problem_list): {len(problem_list)}")

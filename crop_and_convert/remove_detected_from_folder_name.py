@@ -1,8 +1,9 @@
 import os
 import sys
-
+import traceback
 #file paths handled by input from user
 import fiachra_python_logger as logger
+import shutil
 
 #to get current working directory
 #home_dir = os.getcwd()
@@ -37,6 +38,7 @@ for dir_name in top_directories:
 
                     if folders[-9:] == "_detected":
                         try:
+                            shutil.rmtree(folders[:-9], ignore_errors=True)
                             os.rename(folders, folders[:-9])
 
 

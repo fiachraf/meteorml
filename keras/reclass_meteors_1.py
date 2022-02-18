@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.widgets import Button
 from pathlib import Path
+import shutil
 
 
 path_root = Path(__file__).parents[1]
@@ -183,7 +184,7 @@ with open(initial_dir + "/" + csv_file, mode="r") as csv_file:
     for row_index, row in enumerate(csv_reader):
         if row_index == 0:
             continue
-        image_1 = meteor_image(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+        image_1 = meteor_image(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
         meteor_list.append(image_1)
 
 for image_2 in meteor_list:

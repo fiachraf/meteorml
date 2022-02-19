@@ -60,6 +60,13 @@ def standardise_me(image, label):
     image = image / std_val
     return image, label
 
+#I only used this function for some of my later machine learning algorithms
+#If accuracy from this script doesn't mathc self reported accuracy from keras then this migh need to be utilised/not utilised, would need to change line 96 ish
+def rescale_2(image, label):
+    max_val =tf.math.reduce_max(tf.math.abs(image), axis=[1,2,3], keepdims=True)
+    image = image / max_val
+    return image, label
+
 
 # make a tf.dataset generator list
 data_dir = folder_input
@@ -79,13 +86,14 @@ labels_list = []
 file_dataset_norm = file_dataset.map(normalise_me)
 file_dataset_cent = file_dataset_norm.map(center_me)
 file_dataset_stan = file_dataset_cent.map(standardise_me)
+file_dataset_resc2 = file_dataset_stan.map(rescale_2)
 
 image_paths = file_dataset.file_paths
 pred_distribution_list = []
 prediction_list = []
 #index varaible used to keep track of file names as images are loaded in batches while the filenames is just one long list
 index = 0
-for images_batch, labels_batch in file_dataset_stan:
+for images_batch, labels_batch in file_dataset_resc2:
     prediction = CNN_model.predict(images_batch)
     #print(f"prediction: {prediction}")
     #print(f"type(prediction): {type(prediction)}")

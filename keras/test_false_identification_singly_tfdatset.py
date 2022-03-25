@@ -75,7 +75,8 @@ file_dataset = image_dataset_from_directory(
    labels="inferred",
    color_mode = "grayscale",
    batch_size=32,
-   image_size = (128,128),
+   #don't forget to change image size depending on network
+   image_size = (32,32),
    shuffle=False,
    interpolation = "bilinear")
 labels_list = []
@@ -166,7 +167,7 @@ fig = plt.hist(pred_distribution_list, bins=100)
 plt.title("Prediction_distribution")
 plt.xlabel("Prediction")
 plt.ylabel("No. of predictions")
-plt.savefig(f"{model_name}_pred_dist_singly_tf.png")
+plt.savefig(f"{model_name[:-3]}_pred_dist_singly_tf.png")
 
 end_time = time.perf_counter()
 print(f"time elapsed: {end_time - start_time}")

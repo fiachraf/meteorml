@@ -239,7 +239,7 @@ def make_predictions(dataset_1, neural_model, initial_dir):
         #does the prediction for a batch of images
         prediction = neural_model.predict(images_batch)
 
-        # print(f"batch {(index + 1)/ 32} of {len(image_paths) / 32}")
+        print(f"batch {(index + 1)/ 32} of {len(image_paths) / 32}", end="\r")
         # activations = activation_model.predict(images_batch)
         # print(f"batch activations: {activations.shape}")
 
@@ -260,15 +260,18 @@ def make_predictions(dataset_1, neural_model, initial_dir):
     # print(f"len(prediction_list): {len(prediction_list)}")
 
 
-    log_file_name = f"{model_name[:-3]}_false_iden_log_singly_tf.csv"
+    log_file_name = f"{model_name[:-3]}_test_analyser.csv"
     print(f"saving prediction list as {log_file_name}")
     print("please wait for results to finish writing to file")
     with open(log_file_name, "w") as csv_logfile:
         csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
         csv_logfile_writer.writerow(["Label", "Prediction", "True Prediction", "File Name"])
+        csv_index = 0 
+        len_preds = len(prediction_list)
         for label_1, pred_1, false_pred_1, file_name_1 in prediction_list:
+            print(f"On entry {csv_index}/{len_preds}", end="\r")
             csv_logfile_writer.writerow([label_1, pred_1, false_pred_1, file_name_1])
-
+            csv_index += 1
 
 
     #need as input for hist function to be list of all pred values in pred_list
@@ -276,7 +279,7 @@ def make_predictions(dataset_1, neural_model, initial_dir):
     plt.title("Prediction_distribution")
     plt.xlabel("Prediction")
     plt.ylabel("No. of predictions")
-    plt.savefig(f"{model_name[:-3]}_pred_dist_singly_tf.png")
+    plt.savefig(f"{model_name[:-3]}_test_analyser.png")
 
 
 

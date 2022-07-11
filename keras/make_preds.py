@@ -34,7 +34,7 @@ start_time = time.perf_counter()
 pred_list = []
 
 def false_pred(actual_label, predicted_label):
-    if abs(actual_label - predicted_label) < 0.45:
+    if abs(actual_label - predicted_label) <= 0.5:
         return True
     else:
         return False

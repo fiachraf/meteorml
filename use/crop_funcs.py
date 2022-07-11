@@ -9,7 +9,7 @@ from pathlib import Path
 
 # I didn't have RMS installed in the environment that I was working in initially cos I didn't want to build opencv so this was my workaround
 try:
-    # from RMS.Formats import FFfile
+    from RMS.Formats import FFfile
     from RMS.Formats import FTPdetectinfo
 except:
     try:

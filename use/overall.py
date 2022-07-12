@@ -41,28 +41,29 @@ if len(sys.argv) == 4:
     keep_pngs = sys.argv[3]
 else:
     #default options here should be changed
-    FTP_path_1 = input("enter path of FTPdetectinfo file to be used: ") or "/home/fiachra/Downloads/Meteor_Files/ConfirmedFiles/BE0001_20181209_161939_640835/FTPdetectinfo_BE0001_20181209_161939_640835.txt"
+    FTP_path_1 = input("enter path of FTPdetectinfo file to be used: ") 
 
-    FF_dir_path_1 = input("enter path of FF_file dir to be used: ") or "/home/fiachra/Downloads/Meteor_Files/ConfirmedFiles/BE0001_20181209_161939_640835"
+    FF_dir_path_1 = input("enter path of FF_file dir to be used: ")
     keep_pngs = input("Keep temp pngs (Y/N): ")
 
 #hardcoded path for the current last model Fiachra trained, can easily be changed with a different .h5 file so long as it has been trained using all the same preprocessing steps otherwise will required modifications to the make_pred.py script and possibly the png_gen.py script
-model_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "meteorml_20220220_4.h5")
-print(f"\n{model_path}\n")
+model_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "meteorml_20220325_1.h5")
+
 png_gen.gen_pngs(FTP_path_1, FF_dir_path_1)
 #little quirk, tf.keras.image_dataset_from_directory() needs argument to be directory path, this directory then needs to contain another directory which contains all the images, "labels" of images also affects this quirk
 pred_list = make_pred.cust_predict(os.path.join(FF_dir_path_1, "temp_png_dir"), model_path)
 
-print(pred_list)
+#print(pred_list)
 
 if keep_pngs not in ["Y", "y"]:
     shutil.rmtree(os.path.join(FF_dir_path_1, "temp_png_dir"))
 
-os.chdir(FF_dir_path_1)
-for detect in pred_list:
-    with open("meteorml_preds.csv", "w") as csv_logfile:
-        csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
-        csv_logfile_writer.writerow(["Prediction", "File Name"])
-        for pred_1, file_name_1 in pred_list:
-            csv_logfile_writer.writerow([pred_1, file_name_1])
+#os.chdir(FF_dir_path_1)
+#for detect in pred_list:
+#    with open("meteorml_preds.csv", "w") as csv_logfile:
+#        csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
+#        csv_logfile_writer.writerow(["Prediction", "File Name"])
+#        for pred_1, file_name_1 in pred_list:
+#            csv_logfile_writer.writerow([pred_1, file_name_1])
 
+print("finished")

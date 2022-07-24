@@ -41,7 +41,7 @@ if len(sys.argv) == 4:
     keep_pngs = sys.argv[3]
 else:
     #default options here should be changed
-    FTP_path_1 = input("enter path of FTPdetectinfo file to be used: ") 
+    FTP_path_1 = input("enter path of FTPdetectinfo file to be used: ")
 
     FF_dir_path_1 = input("enter path of FF_file dir to be used: ")
     keep_pngs = input("Keep temp pngs (Y/N): ")
@@ -58,8 +58,23 @@ pred_list = make_pred.cust_predict(os.path.join(FF_dir_path_1, "temp_png_dir"), 
 if keep_pngs not in ["Y", "y"]:
     shutil.rmtree(os.path.join(FF_dir_path_1, "temp_png_dir"))
 
-#os.chdir(FF_dir_path_1)
-#for detect in pred_list:
+# to rename all the png file to have the prediction at the end of the file name, delete all the # in the following segment
+# try:
+#     new_list = []
+#     for pred_2, file_name_2 in pred_list:
+#         new_file_name = file_name_2[:-4] + f"_{(pred_2 * 100):.0f}" + ".png"
+#         new_list.append((pred_2, new_file_name))
+#         os.rename(file_name_2, new_file_name)
+#     pred_list = new_list
+# except Exception as e:
+#     print(f"Error occured: {e}")
+#     pass
+
+
+
+#to write the predictions to a csv file in the .fits folder, delete all the # in the following segment
+# os.chdir(FF_dir_path_1)
+# for detect in pred_list:
 #    with open("meteorml_preds.csv", "w") as csv_logfile:
 #        csv_logfile_writer = csv.writer(csv_logfile, delimiter=",")
 #        csv_logfile_writer.writerow(["Prediction", "File Name"])
